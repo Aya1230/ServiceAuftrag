@@ -35,7 +35,7 @@ session_start();
                     $message= "<p class='block text-gray-300 dark:text-gray-300 text-sm font-bold mb-2'>" . "<span class='text-red-800'>Error: </span>". 'Benutzer ist gesperrt. Das Ändern des Passworts ist nicht mehr möglich, bitte kontaktieren Sie ihren Administrator!' . "</p>";
                     break;
 
-                default:
+                case "login":
                     $message= "<p class='block text-gray-300 dark:text-gray-300 text-sm font-bold mb-2'>" . 'Sie wurden eingelogt...' . "</p>";
                     break;
             }
@@ -63,7 +63,7 @@ session_start();
         if ($row['disabled'] != 1) {
             if ($row) {
                 if (sha1($_POST['password']) == $row['pw']) {
-                    error();
+                    error("login");
 
                     $stmt = $conn->prepare("UPDATE login.users SET disabled = 0, attempts = 0 WHERE username= :username");
                     $stmt->bindParam(':username', $username);
@@ -102,7 +102,6 @@ session_start();
         <div class="my-4">
             <label class="block text-gray-300 dark:text-gray-300 text-sm font-bold mb-2" for="password">Password</label>
             <input class="transition bg-gray-900 outline-none appearance-none border border-transparent rounded w-full p-2 text-gray-700 dark:text-gray-300 leading-normal appearance-none focus:outline-none focus:bg-white dark:focus:bg-gray-800 focus:border-gray-300 dark:focus:border-gray-500" id="password" name="password" placeholder="Password..." type="password" required>
-            <p class="text-gray-300 dark:text-gray-300 text-xs my-2">Forgot password? <a href="password/reset" class="underline text-gray-500 dark:text-gray-50">Click here</a> to reset it.</p>
         </div>
         <button class="button mt-4 w-full bg-indigo-500 py-2.5 rounded" type="submit">Login →</button>
         <p class="text-gray-300 dark:text-gray-300 text-xs my-2">No account yet? <a href="register/" class="underline text-gray-500 dark:text-gray-50">Click here</a> to make one.</p>

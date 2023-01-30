@@ -10,12 +10,12 @@ session_start();
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="css/tailwind.min.css">
-  <link rel="icon" type="image/png" sizes="32x32" href="img/icon.ico">
+  <link rel="stylesheet" href="../css/tailwind.min.css">
+  <link rel="icon" type="image/png" sizes="32x32" href="../img/icon.ico">
 </head>
 <body class="flex flex-col h-full bg-gray-900 bg-slate-900 text-gray-300">
 
-    <img src="img/icon.ico" class="pt-16 block mx-auto w-20">
+    <img src="../img/icon.ico" class="pt-16 block mx-auto w-20">
 
     <?php
 
@@ -104,7 +104,7 @@ session_start();
             <input class="transition bg-gray-900 outline-none appearance-none border border-transparent rounded w-full p-2 text-gray-700 dark:text-gray-300 leading-normal appearance-none focus:outline-none focus:bg-white dark:focus:bg-gray-800 focus:border-gray-300 dark:focus:border-gray-500" id="password" name="password" placeholder="Password..." type="password" required>
         </div>
         <button class="button mt-4 w-full bg-indigo-500 py-2.5 rounded" type="submit">Login →</button>
-        <p class="text-gray-300 dark:text-gray-300 text-xs my-2">No account yet? <a href="register/" class="underline text-gray-500 dark:text-gray-50">Click here</a> to make one.</p>
+        <p class="text-gray-300 dark:text-gray-300 text-xs my-2">No account yet? <a href="../register" class="underline text-gray-500 dark:text-gray-50">Click here</a> to make one.</p>
     </form>
 
 </body>

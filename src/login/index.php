@@ -50,11 +50,11 @@ session_start();
         $pw = trim($_POST['password']);
         $attempts = 0;
 
-        $conn = new PDO("mysql:host=127.0.0.1;dbname=login", "root", "");
+        $conn = new PDO("mysql:host=127.0.0.1;dbname=service", "root", "");
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 
-        $stmt = $conn->prepare("SELECT * FROM login.users WHERE username = :username");
+        $stmt = $conn->prepare("SELECT * FROM users WHERE username = :username");
         $stmt->bindParam(':username', $username);
         $stmt->execute();
 
@@ -65,18 +65,18 @@ session_start();
                 if (sha1($_POST['password']) == $row['pw']) {
                     error("login");
 
-                    $stmt = $conn->prepare("UPDATE login.users SET disabled = 0, attempts = 0 WHERE username= :username");
+                    $stmt = $conn->prepare("UPDATE users SET disabled = 0, attempts = 0 WHERE username= :username");
                     $stmt->bindParam(':username', $username);
                     $stmt->execute();
                 } else {
                     error("badPW");
 
                     if ($row["attempts"] < 3) {
-                       $stmt = $conn->prepare("UPDATE login.users SET attempts = attempts + 1 WHERE username= :username");
+                       $stmt = $conn->prepare("UPDATE users SET attempts = attempts + 1 WHERE username= :username");
                        $stmt->bindParam(':username', $username);
                        $stmt->execute();
                     } else {
-                        $stmt = $conn->prepare("UPDATE login.users SET disabled = 1 WHERE username= :username");
+                        $stmt = $conn->prepare("UPDATE users SET disabled = 1 WHERE username= :username");
                         $stmt->bindParam(':username', $username);
                         $stmt->execute();
                     }

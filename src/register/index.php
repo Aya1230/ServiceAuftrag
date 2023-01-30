@@ -40,7 +40,7 @@ session_start();
         }
 
         function redirect() {
-            header('Location: ../');
+            header('Location: ../login');
             exit;
         }
 
@@ -49,12 +49,12 @@ session_start();
         $pw = trim($_POST['password']);
         $_SESSION['username'] = $username;
 
-        $conn = new PDO("mysql:host=127.0.0.1;dbname=login", "root", "");
+        $conn = new PDO("mysql:host=127.0.0.1;dbname=service", "root", "");
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         
         try {
             if (preg_match('@[A-Z]@', $pw) && preg_match('@[a-z]@', $pw) && preg_match('@[0-9]@', $pw) && preg_match('@\w@', $pw) && strlen($pw) > 10) {
-                $stmt = $conn->prepare("INSERT INTO login.users (username, pw) VALUES (:username, sha(:pw))");
+                $stmt = $conn->prepare("INSERT INTO users (username, pw) VALUES (:username, sha(:pw))");
                 $stmt->bindParam(':username', $username);
                 $stmt->bindParam(':pw', $pw);
                 $stmt->execute();

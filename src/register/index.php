@@ -10,7 +10,7 @@ session_start();
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="../css/tailwind.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
   <link rel="icon" type="image/png" sizes="32x32" href="../img/icon.ico">
 </head>
 <body class="flex flex-col h-full bg-gray-900 bg-slate-900">
@@ -45,17 +45,15 @@ session_start();
         }
 
 
-
-
-        $_SESSION['username'] = $username;
-
-        $conn = new PDO("mysql:host=127.0.0.1;dbname=service", "root", "");
+        $conn = new PDO("mysql:host=127.0.0.1;dbname=service", "root", "") or die("Keine Verbindung möglich");;
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         $uname = strip_tags(htmlspecialchars($_POST['username']));
         $username = $conn->quote($uname);
         $pw = strip_tags(htmlspecialchars($_POST['password']));
         $password_hash = hash('sha512', $pw);
+
+        $_SESSION['username'] = $username;
 
         $stmt = $conn->prepare("SELECT * FROM users WHERE username = :username");
         $stmt->bindParam(':username', $username);

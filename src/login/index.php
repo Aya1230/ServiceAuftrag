@@ -48,11 +48,9 @@ session_start();
         $attempts = 0;
         $maxAttempts = 3;
 
-        $conn = new PDO("mysql:host=127.0.0.1;dbname=service", "root", "") or die("Keine Verbindung möglich");;
-        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        require '../php/include/db.php';
 
-        $uname = strip_tags(htmlspecialchars($_POST['username']));
-        $username = $conn->quote($uname);
+        $username = strip_tags(htmlspecialchars($_POST['username']));
         $pw = strip_tags(htmlspecialchars($_POST['password']));
 
         $stmt = $conn->prepare("SELECT * FROM users WHERE username = :username");
@@ -81,7 +79,6 @@ session_start();
                         $stmt->bindParam(':username', $username);
                         $stmt->execute();
                     }
-
                 }
             } else {
                 error("userLocked");

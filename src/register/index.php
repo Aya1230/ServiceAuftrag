@@ -44,12 +44,9 @@ session_start();
             exit;
         }
 
+        require '../php/include/db.php';
 
-        $conn = new PDO("mysql:host=127.0.0.1;dbname=service", "root", "") or die("Keine Verbindung möglich");;
-        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-        $uname = strip_tags(htmlspecialchars($_POST['username']));
-        $username = $conn->quote($uname);
+        $username = strip_tags(htmlspecialchars($_POST['username']));
         $pw = strip_tags(htmlspecialchars($_POST['password']));
         $password_hash = hash('sha512', $pw);
 

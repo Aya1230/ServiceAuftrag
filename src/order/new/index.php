@@ -5,6 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
+    <link rel="icon" href="../../img/icon.ico">
+    <script src="../../js/datetime.js"></script>
     <title>Neuen Auftrag erfassen</title>
 </head>
 <body class="bg-gray-900 flex items-center justify-center h-screen">
@@ -87,7 +89,7 @@
                         </div>
                         </div>
                         <label for="termin" class="block text-sm mb-2 font-medium text-gray-300">Terminwunsch</label>
-                            <input required stype="text" name="termin" id="termin" class="block px-4 py-3 w-full text-sm text-gray-400 bg-gray-900 rounded-lg mb-2" placeholder="Terminwunsch...">
+                            <input required type="datetime-local" id="termin" name="auftragseingang" style="color-scheme: dark;"  class="bg-gray-900 text-gray-400 text-sm rounded-lg block w-full px-4 py-3">
                         <label for="details" class="block mb-2 text-sm font-medium text-gray-300">Details</label>
                             <textarea name="details" id="details" style="resize: none;" rows="4" class="block px-4 py-3 w-full text-sm text-gray-400 bg-gray-900 rounded-lg" placeholder="Weitere Informationen, Wünsche, etc."></textarea>
                     </div>
@@ -95,7 +97,7 @@
             </div>
         </div>
         <div class="flex-auto w-2/3 items-center">
-            <button onclick="location.href='./index.php'" type="button" class="w-32 mt-5 text-white text-center bg-red-700 hover:bg-red-800 font-medium rounded-lg text-sm px-5 py-3 mr-2 mb-2">Abbrechen</button>
+            <button onclick="location.href='../../../../../../index.php'" type="button" class="w-32 mt-5 text-white text-center bg-red-700 hover:bg-red-800 font-medium rounded-lg text-sm px-5 py-3 mr-2 mb-2">Abbrechen</button>
             <input type="submit" name="create_order" value="Hinzufügen" class="w-80 text-white text-center bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm mt-5 px-5 py-3 mb-2"></input>
         </div>
     </form>

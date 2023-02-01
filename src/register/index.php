@@ -27,7 +27,7 @@ session_start();
                     $message = "<p class='block text-gray-300 dark:text-gray-300 text-sm font-bold mb-2'>" . "<span class='text-red-800'>Error: </span>". 'Das Passwort muss mindestens einen Großbuchstaben, einen Kleinbuchstaben, eine Ziffer und ein Sonderzeichen enthalten. Die Mindestlänge des Passworts beträgt zehn Ziffern.' . "</p>";
                     break;
                 case "userExists":
-                    $message= "<p class='block text-gray-300 dark:text-gray-300 text-sm font-bold mb-2'>" . "<span class='text-red-800'>Error: </span>". 'Benutzer existiert bereits!' . "</p>";
+                    $message= "<p class='block text-gray-300 dark:text-gray-300 text-sm font-bold mb-2'>" . "<span class='text-red-800'>Error: </span>". 'Invalid INput!' . "</p>";
                     break;
                 case "register":
                     $message= "<p class='block text-gray-300 dark:text-gray-300 text-sm font-bold mb-2'>" . 'User wurde erstellt' . "</p>";
@@ -45,18 +45,31 @@ session_start();
         }
 
 
-        $username = trim($_POST['username']);
-        $pw = trim($_POST['password']);
+
+
         $_SESSION['username'] = $username;
 
         $conn = new PDO("mysql:host=127.0.0.1;dbname=service", "root", "");
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        
-        try {
-            if (preg_match('@[A-Z]@', $pw) && preg_match('@[a-z]@', $pw) && preg_match('@[0-9]@', $pw) && preg_match('@\w@', $pw) && strlen($pw) > 10) {
-                $stmt = $conn->prepare("INSERT INTO users (username, pw) VALUES (:username, sha(:pw))");
+
+        $uname = strip_tags(htmlspecialchars($_POST['username']));
+        $username = $conn->quote($uname);
+        $pw = strip_tags(htmlspecialchars($_POST['password']));
+        $password_hash = hash('sha512', $pw);
+
+        $stmt = $conn->prepare("SELECT * FROM users WHERE username = :username");
+        $stmt->bindParam(':username', $username);
+        $stmt->execute();
+        $result = $stmt->fetch();
+
+
+        if ($result) {
+            error("userExists");
+        } else {
+            if (preg_match('@[A-Z]@', $pw) && preg_match('@[a-z]@', $pw) && preg_match('@[0-9]@', $pw) && preg_match('@\w@', $pw) && strlen($pw) > 14) {
+                $stmt = $conn->prepare("INSERT INTO users (username, pw) VALUES (:username, :pw)");
                 $stmt->bindParam(':username', $username);
-                $stmt->bindParam(':pw', $pw);
+                $stmt->bindParam(':pw', $password_hash);
                 $stmt->execute();
 
                 error("register");
@@ -64,8 +77,6 @@ session_start();
             } else {
                 error("passwordBad");
             }
-        } catch (PDOException $exception) {
-            error("userExists");
         }
 
     }

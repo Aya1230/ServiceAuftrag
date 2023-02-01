@@ -23,8 +23,8 @@ session_start();
         function error(string $error): void
         {
             switch ($error) {
-                case "badUser":
-                    $message= "<p class='block text-gray-300 dark:text-gray-300 text-sm font-bold mb-2'>" . "<span class='text-red-800'>Error: </span>". 'Username falsch oder existiert nicht!' . "</p>";
+                case "loginError":
+                    $message= "<p class='block text-gray-300 dark:text-gray-300 text-sm font-bold mb-2'>" . "<span class='text-red-800'>Error: </span>". 'Login nicht erfolgreich!' . "</p>";
                     break;
 
                 case "badPW":
@@ -45,14 +45,15 @@ session_start();
             echo "</div>";
         }
 
-
-        $username = trim($_POST['username']);
-        $pw = trim($_POST['password']);
         $attempts = 0;
+        $maxAttempts = 3;
 
         $conn = new PDO("mysql:host=127.0.0.1;dbname=service", "root", "");
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
+        $uname = strip_tags(htmlspecialchars($_POST['username']));
+        $username = $conn->quote($uname);
+        $pw = strip_tags(htmlspecialchars($_POST['password']));
 
         $stmt = $conn->prepare("SELECT * FROM users WHERE username = :username");
         $stmt->bindParam(':username', $username);
@@ -60,9 +61,9 @@ session_start();
 
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($row['disabled'] != 1) {
-            if ($row) {
-                if (sha1($_POST['password']) == $row['pw']) {
+        if ($row == true) {
+            if ($row['disabled'] == 0) {
+                if (hash('sha512', $pw) == $row['pw']) {
                     error("login");
 
                     $stmt = $conn->prepare("UPDATE users SET disabled = 0, attempts = 0 WHERE username= :username");
@@ -71,7 +72,7 @@ session_start();
                 } else {
                     error("badPW");
 
-                    if ($row["attempts"] < 3) {
+                    if ($row["attempts"] < $maxAttempts) {
                        $stmt = $conn->prepare("UPDATE users SET attempts = attempts + 1 WHERE username= :username");
                        $stmt->bindParam(':username', $username);
                        $stmt->execute();
@@ -83,10 +84,10 @@ session_start();
 
                 }
             } else {
-                error("badUser");
+                error("userLocked");
             }
         } else {
-            error("userLocked");
+            error("loginError");
         }
 
     }

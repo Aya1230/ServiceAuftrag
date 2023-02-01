@@ -27,7 +27,7 @@ session_start();
                     $message = "<p class='block text-gray-300 dark:text-gray-300 text-sm font-bold mb-2'>" . "<span class='text-red-800'>Error: </span>". 'Das Passwort muss mindestens einen Großbuchstaben, einen Kleinbuchstaben, eine Ziffer und ein Sonderzeichen enthalten. Die Mindestlänge des Passworts beträgt zehn Ziffern.' . "</p>";
                     break;
                 case "userExists":
-                    $message= "<p class='block text-gray-300 dark:text-gray-300 text-sm font-bold mb-2'>" . "<span class='text-red-800'>Error: </span>". 'Invalid INput!' . "</p>";
+                    $message= "<p class='block text-gray-300 dark:text-gray-300 text-sm font-bold mb-2'>" . "<span class='text-red-800'>Error: </span>". 'Fehlerhafter Input!' . "</p>";
                     break;
                 case "register":
                     $message= "<p class='block text-gray-300 dark:text-gray-300 text-sm font-bold mb-2'>" . 'User wurde erstellt' . "</p>";

@@ -56,9 +56,6 @@
                     </td>-->
             </tbody>
         </table>
-        <div class="flex flex-1 w-2/3 mx-auto items-center">
-            <button onclick="location.href='../'" type="button" class="w-32 mt-5 text-white bg-red-700 hover:bg-red-800 font-medium rounded-lg text-sm px-5 py-3 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-red-800">Zurück</button>
-        </div>
     </div>
 </body>
 </html>

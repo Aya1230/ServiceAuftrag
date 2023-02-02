@@ -12,9 +12,7 @@
     <div class="w-full">
         <div class="flex flex-1 w-2/3 mx-auto items-center">
             <h1 class="w-full mx-auto uppercase text-4xl font-bold py-4 text-white">Mitarbeiterübersicht</h1>
-            <button type="button" class="w-96 text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-3 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
-                Neuer Mitarbeiter 
-            </button>
+            <button onclick="location.href='add/'" type="button" class="w-96 text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-3 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Neuer Mitarbeiter</button>
         </div>
         <table class="w-2/3 mx-auto text-sm text-left text-gray-500 text-gray-400">
             <thead class="text-xs dark:text-gray-700 uppercase dark:bg-gray-50 bg-gray-700 text-gray-400">
@@ -65,11 +63,6 @@
                 </tr>
             </tbody>
         </table>
-        <div class="flex flex-1 w-2/3 mx-auto items-center">
-            <button onclick="location.href='../'" type="button" class="w-32 mt-5 text-white bg-red-700 hover:bg-red-800 font-medium rounded-lg text-sm px-5 py-3 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-red-800">
-                Zurück 
-            </button>
-        </div>
     </div>
 </body>
 </html>

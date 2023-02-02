@@ -23,9 +23,9 @@
                     <th scope="col" class="px-6 py-3">Name</th>
                     <th scope="col" class="px-6 py-3">Tags</th>
                     <th scope="col" class="px-6 py-3">Status</th>
-                    <th scope="col" class="px-6 py-3">Deadline</th>
-                    <th scope="col" class="px-6 py-3">User</th>
-                    <th scope="col" class="px-6 py-3">Kunde</th>
+                    <th scope="col" class="px-6 py-3">Hinzugefügt am</th>
+                    <th scope="col" class="px-6 py-3">Wunschtermin</th>
+                    <th scope="col" class="px-6 py-3">Aufgabe zugewiesen</th>
                     <th scope="col" class="px-6 py-3">Details</th>
                 </tr>
             </thead>
@@ -42,11 +42,34 @@
                             echo "<tr class='bg-white border-b bg-gray-800 border-gray-700 text-center'>";
                             echo "<th scope='row' class='tx-6 py-4 font-medium dark:text-gray-900 whitespace-nowrap text-white'>" . $row['auftr_nr'] . "</th>";
                             echo "<td class='px-6 py-4'>" . $row['name'] . "</td>";
-                            echo "<td class='px-6 py-4'>" . $row['tag_nr'] . "</td>";
-                            echo "<td class='px-6 py-4'>" . $row['s_nr'] . "</td>";
+                            switch($row['tag_nr']){
+                                case '1':
+                                    echo "<td class='px-6 py-4'>" . "Reperatur" . "</td>";
+                                    break;
+                                case '2':
+                                    echo "<td class='px-6 py-4'>" . "Sanitär" . "</td>";
+                                    break;
+                                case '3':
+                                    echo "<td class='px-6 py-4'>" . "Garantie" . "</td>";
+                                    break;
+                                case '4':
+                                    echo "<td class='px-6 py-4'>" . "Heizung" . "</td>";
+                                    break;
+                            }
+                            switch($row['s_nr']){
+                                case '1':
+                                    echo "<td class='px-6 py-4'>" . "Backlog" . "</td>";
+                                    break;
+                                case '2':
+                                    echo "<td class='px-6 py-4'>" . "Work in Progrss" . "</td>";
+                                    break;
+                                case '3':
+                                    echo "<td class='px-6 py-4'>" . "Done" . "</td>";
+                                    break;
+                            }
                             echo "<td class='px-6 py-4'>" . $row['date'] . "</td>";
+                            echo "<td class='px-6 py-4'>" . $row['desired_date'] . "</td>";
                             echo "<td class='px-6 py-4'>" . $row['u_id'] . "</td>";
-                            echo "<td class='px-6 py-4'>" . $row['k_id'] . "</td>";
                             echo "<td class='px-6 py-4'>" . "<a href='details/' class='font-medium text-blue-600 dark:text-blue-500 hover:underline'>Details</a>" . "</td>";
                             echo "</tr>";
                         }

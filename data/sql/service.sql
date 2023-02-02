@@ -4,16 +4,14 @@ USE service;
 CREATE TABLE IF NOT EXISTS users (
                                      u_id INT PRIMARY KEY AUTO_INCREMENT,
                                      anrede ENUM('Herr', 'Frau', 'Unbekannt') NOT NULL DEFAULT 'Unbekannt',
-                                     username VARCHAR(25) NOT NULL UNIQUE,
+                                     name VARCHAR(25) NOT NULL UNIQUE,
                                      pw VARCHAR(128) NOT NULL,
                                      tel VARCHAR(20) NOT NULL,
                                      phone VARCHAR(20) NOT NULL,
                                      adresse VARCHAR(40) NOT NULL,
                                      plz SMALLINT NOT NULL,
                                      ort VARCHAR(40) NOT NULL,
-                                     berechtigungen ENUM('Mitarbeiter', 'Bereichsleiter', 'Administator') NOT NULL DEFAULT 'Mitarbeiter',
-                                     attempts TINYINT DEFAULT NULL,
-                                     disabled TINYINT DEFAULT NULL
+                                     berechtigungen ENUM('Mitarbeiter', 'Bereichsleiter', 'Administator') NOT NULL DEFAULT 'Mitarbeiter'
 );
 
 CREATE TABLE IF NOT EXISTS kunde (
@@ -33,22 +31,12 @@ CREATE TABLE IF NOT EXISTS tags (
                                     tag VARCHAR(25)
 );
 
-INSERT INTO tags (tag)
-VALUES ('Reperatur')
+INSERT INTO tags (tag) VALUES
+('Reperatur'),
+('Sanitär'),
+('Garantie'),
+('Heizung')
 ;
-
-INSERT INTO tags (tag)
-VALUES ('Sanitär')
-;
-
-INSERT INTO tags (tag)
-VALUES ('Garantie')
-;
-
-INSERT INTO tags (tag)
-VALUES ('Heizung')
-;
-
 
 
 CREATE TABLE IF NOT EXISTS state (
@@ -56,16 +44,10 @@ CREATE TABLE IF NOT EXISTS state (
                                      state VARCHAR(25)
 );
 
-INSERT INTO state (state)
-VALUES ('Backlog')
-;
-
-INSERT INTO state (state)
-VALUES ('WIP')
-;
-
-INSERT INTO state (state)
-VALUES ('Done')
+INSERT INTO state (state) VALUES
+('Backlog'),
+('WIP'),
+('Done')
 ;
 
 

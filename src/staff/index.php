@@ -44,7 +44,7 @@
                                 echo "<tr class='bg-white border-b bg-gray-800 border-gray-700 text-center'>";
                                 echo "<th scope='row' class='tx-6 py-4 font-medium dark:text-gray-900 whitespace-nowrap text-white'>" . $row['u_id'] . "</th>";
                                 echo "<td class='px-6 py-4'>" . $row['anrede'] . "</td>";
-                                echo "<td class='px-6 py-4'>" . $row['username'] . "</td>";
+                                echo "<td class='px-6 py-4'>" . $row['name'] . "</td>";
                                 echo "<td class='px-6 py-4'>" . $row['tel'] . "</td>";
                                 echo "<td class='px-6 py-4'>" . $row['phone'] . "</td>";
                                 echo "<td class='px-6 py-4'>" . $row['adresse'] . "</td>";

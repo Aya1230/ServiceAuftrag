@@ -55,7 +55,7 @@ session_start();
 
                     $berechtigung = $_POST['berechtigung-option'];
                     $anrede = $_POST['anrede'];
-                    $username = strip_tags(htmlspecialchars($_POST['username']));
+                    $name = strip_tags(htmlspecialchars($_POST['name']));
                     $pw = strip_tags(htmlspecialchars($_POST['password']));
                     $password_hash = hash('sha512', $pw);
                     $tel = strip_tags(htmlspecialchars($_POST['tel']));
@@ -67,7 +67,7 @@ session_start();
 
 
 
-                    $stmt = $conn->prepare("SELECT * FROM users WHERE username = :name");
+                    $stmt = $conn->prepare("SELECT * FROM users WHERE name = :name");
                     $stmt->bindParam(':name', $name);
                     $stmt->execute();
                     $result = $stmt->fetch();
@@ -77,9 +77,9 @@ session_start();
                         error("staffExists");
                     } else {
                         if (preg_match('@[A-Z]@', $pw) && preg_match('@[a-z]@', $pw) && preg_match('@[0-9]@', $pw) && preg_match('@\w@', $pw) && strlen($pw) > 14) {
-                            $stmt = $conn->prepare("INSERT INTO users (anrede, username, pw, tel, phone, adresse, plz, ort, berechtigungen) VALUES (:anrede,:username,:pw,:tel,:phone,:adresse,:plz,:ort,:berechtigung)");
+                            $stmt = $conn->prepare("INSERT INTO users (anrede, name, pw, tel, phone, adresse, plz, ort, berechtigungen) VALUES (:anrede,:name,:pw,:tel,:phone,:adresse,:plz,:ort,:berechtigung)");
                             $stmt->bindParam(':anrede', $anrede);
-                            $stmt->bindParam(':username', $username);
+                            $stmt->bindParam(':name', $name);
                             $stmt->bindParam(':pw', $password_hash);
                             $stmt->bindParam(':tel', $tel);
                             $stmt->bindParam(':phone', $phone);
@@ -122,7 +122,7 @@ session_start();
                     </div>
                     <div class="col-span-6 sm:col-span-4">
                         <label class="block text-gray-300 text-gray-300  text-sm font-bold mb-2" for="username">Name</label>
-                        <input class="border-gray-200 bg-white text-sm placeholder-gray-500 shadow-sm border-gray-700 bg-gray-800 text-white outline-none appearance-none border border-transparent rounded w-full p-2  text-white leading-normal appearance-none focus:outline-none focus:bg-white focus:bg-gray-800 focus:border-gray-300 focus:border-gray-500 focus:text-white placeholder-white" id="username" name="username" placeholder="Max Mustermann" type="text" required>
+                        <input class="border-gray-200 bg-white text-sm placeholder-gray-500 shadow-sm border-gray-700 bg-gray-800 text-white outline-none appearance-none border border-transparent rounded w-full p-2  text-white leading-normal appearance-none focus:outline-none focus:bg-white focus:bg-gray-800 focus:border-gray-300 focus:border-gray-500 focus:text-white placeholder-white" id="name" name="name" placeholder="Max Mustermann" type="text" required>
                     </div>
                     <div class="col-span-6">
                         <label class="block text-gray-300 text-gray-300  text-sm font-bold mb-2" for="street">Passwort</label>

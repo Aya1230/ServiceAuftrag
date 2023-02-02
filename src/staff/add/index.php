@@ -6,7 +6,7 @@ session_start();
 ?>
 
 <head>
-    <title>Register</title>
+    <title>Mitarbeiter hinzufügen</title>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -104,11 +104,11 @@ session_start();
                         <label for="berechtigung" class="block mb-2 text-sm font-medium text-gray-300">Berechtigung</label>
                         <div class="flex">
                             <div class="flex items-center mr-4">
-                                <input name="berechtigung-option" id="berechtigung" type="radio" value="Mitarbeiter" class="w-4 h-4 text-blue-600 rounded">
+                                <input name="berechtigung-option" id="berechtigung" type="radio" value="Mitarbeiter" class="w-4 h-4 text-blue-600 " checked>
                                 <label for="berechtigung-radio" class="ml-2 text-sm text-gray-400">Mitarbeiter</label>
                             </div>
                             <div class="flex items-center mr-4">
-                                <input name="berechtigung-option" id="berechtigung" type="radio" value="Bereichsleiter" class="w-4 h-4 text-blue-600 rounded">
+                                <input name="berechtigung-option" id="berechtigung" type="radio" value="Bereichsleiter" class="w-4 h-4 text-blue-600 ">
                                 <label for="berechtigung-radio" class="ml-2 text-sm text-gray-400">Bereichsleiter</label>
                             </div>
                         </div>

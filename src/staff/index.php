@@ -1,11 +1,16 @@
 <!DOCTYPE html>
 <html lang="de">
+
+<?php
+session_start();
+?>
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
     <link rel="icon" href="../img/icon.ico">
+    <script src="../js/phone.js"></script>
     <title>Mitarbeiterübersicht</title>
 </head>
 <body class="bg-gray-900 flex items-center justify-center h-screen">
@@ -34,6 +39,11 @@
             <tbody>
                 <tr class="bg-white border-b bg-gray-800 border-gray-700">
                     <?php
+                    if (!isset($_SESSION['login'])){
+                        header("Location: ../login/");
+                        die;
+                    }
+
                         require '../php/include/db.php';
 
                         $stmt = $conn->prepare("SELECT * FROM users");
@@ -45,8 +55,8 @@
                                 echo "<th scope='row' class='tx-6 py-4 font-medium dark:text-gray-900 whitespace-nowrap text-white'>" . $row['u_id'] . "</th>";
                                 echo "<td class='px-6 py-4'>" . $row['anrede'] . "</td>";
                                 echo "<td class='px-6 py-4'>" . $row['name'] . "</td>";
-                                echo "<td class='px-6 py-4'>" . $row['tel'] . "</td>";
-                                echo "<td class='px-6 py-4'>" . $row['phone'] . "</td>";
+                                echo "<td class='px-6 py-4' id='phone'>" . $row['tel'] . "</td>";
+                                echo "<td class='px-6 py-4' id='phone'>" . $row['phone'] . "</td>";
                                 echo "<td class='px-6 py-4'>" . $row['adresse'] . "</td>";
                                 echo "<td class='px-6 py-4'>" . $row['plz'] . "</td>";
                                 echo "<td class='px-6 py-4'>" . $row['ort'] . "</td>";

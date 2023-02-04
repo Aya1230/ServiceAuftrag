@@ -26,6 +26,11 @@ session_start();
                 </a>
                 <h1 class="mt-6 text-2xl font-bold text-white sm:text-3xl md:text-4xl">Neuen Kunden hinzufügen</h1>
                 <?php
+                if (!isset($_SESSION['login']) && $_SESSION['login'] == 1){
+                    header("Location: ../../login/");
+                    die;
+                }
+
                 if (isset($_POST["button"])) {
                     function error(string $error): void
                     {
@@ -42,8 +47,7 @@ session_start();
                         echo $message;
                     }
 
-                    function redirect()
-                    {
+                    function redirect() {
                         header('Location: ../');
                         exit;
                     }

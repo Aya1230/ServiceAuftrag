@@ -19,71 +19,45 @@ session_start();
 
     <?php
 
-    if (isset($_POST['username']) && isset($_POST['password'])) {
-        function error(string $error): void
+    if (isset($_POST['name']) && isset($_POST['password'])) {
+        function error(string $error)
         {
             switch ($error) {
                 case "loginError":
-                    $message= "<p class='block text-gray-300 dark:text-gray-300 text-sm font-bold mb-2'>" . "<span class='text-red-800'>Error: </span>". 'Login nicht erfolgreich!' . "</p>";
-                    break;
+                    echo "<script>alert('Login nicht erfolgreich');</script>";
+                    return false;
 
                 case "badPW":
-                    $message= "<p class='block text-gray-300 dark:text-gray-300 text-sm font-bold mb-2'>" . "<span class='text-red-800'>Error: </span>". 'Passwort falsch!' . "</p>";
-                    break;
-
-                case "userLocked":
-                    $message= "<p class='block text-gray-300 dark:text-gray-300 text-sm font-bold mb-2'>" . "<span class='text-red-800'>Error: </span>". 'Benutzer ist gesperrt. Das Ändern des Passworts ist nicht mehr möglich, bitte kontaktieren Sie ihren Administrator!' . "</p>";
-                    break;
+                    echo "<script>alert('Passwort falsch');</script>";
+                    return false;
 
                 case "login":
-                    $message= "<p class='block text-gray-300 dark:text-gray-300 text-sm font-bold mb-2'>" . 'Sie wurden eingelogt...' . "</p>";
-                    break;
+                    echo "<script>alert('Sie wurden eingelogt...');window.location.replace('../order/');</script>";
+                    return true;
             }
-
-            echo "<div class='w-full max-w-md mx-auto bg-gray-800 shadow-md rounded px-8 py-6 mt-8'>";
-            echo $message;
-            echo "</div>";
         }
-
-        $attempts = 0;
-        $maxAttempts = 3;
 
         require '../php/include/db.php';
 
-        $username = strip_tags(htmlspecialchars($_POST['username']));
+        $name = strip_tags(htmlspecialchars($_POST['name']));
         $pw = strip_tags(htmlspecialchars($_POST['password']));
 
-        $stmt = $conn->prepare("SELECT * FROM users WHERE username = :username");
-        $stmt->bindParam(':username', $username);
+        $stmt = $conn->prepare("SELECT * FROM users WHERE name = :name");
+        $stmt->bindParam(':name', $name);
         $stmt->execute();
 
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($row == true) {
-            if ($row['disabled'] == 0) {
                 if (hash('sha512', $pw) == $row['pw']) {
-                    error("login");
+                    $_SESSION['login'] = "login successful";
 
-                    $stmt = $conn->prepare("UPDATE users SET disabled = 0, attempts = 0 WHERE username= :username");
-                    $stmt->bindParam(':username', $username);
-                    $stmt->execute();
+                    $result = error("login");
+
                 } else {
                     error("badPW");
-
-                    if ($row["attempts"] < $maxAttempts) {
-                       $stmt = $conn->prepare("UPDATE users SET attempts = attempts + 1 WHERE username= :username");
-                       $stmt->bindParam(':username', $username);
-                       $stmt->execute();
-                    } else {
-                        $stmt = $conn->prepare("UPDATE users SET disabled = 1 WHERE username= :username");
-                        $stmt->bindParam(':username', $username);
-                        $stmt->execute();
-                    }
                 }
             } else {
-                error("userLocked");
-            }
-        } else {
             error("loginError");
         }
 
@@ -95,7 +69,7 @@ session_start();
         <h1 class="text-xl font-black text-gray-100">Enter your username and password</h1>
         <div class="my-4 mt-8">
             <label class="block text-gray-300 dark:text-gray-300  text-sm font-bold mb-2" for="username">Username</label>
-            <input class="bg-gray-900 outline-none appearance-none border border-transparent rounded w-full p-2 text-gray-700 dark:text-gray-300 leading-normal appearance-none focus:outline-none focus:bg-white dark:focus:bg-gray-800 focus:border-gray-300 dark:focus:border-gray-500" id="username" name="username" <?php if(empty($_SESSION['username'])) { echo "placeholder='Username...'";} else { echo "value='{$_SESSION['username']}'";;} ?>  type="text" required>
+            <input class="bg-gray-900 outline-none appearance-none border border-transparent rounded w-full p-2 text-gray-700 dark:text-gray-300 leading-normal appearance-none focus:outline-none focus:bg-white dark:focus:bg-gray-800 focus:border-gray-300 dark:focus:border-gray-500" id="name" name="name" <?php if(empty($_SESSION['name'])) { echo "placeholder='Max Mustermann'";} else { echo "value='{$_SESSION['name']}'";;} ?>  type="text" required>
         </div>
         <div class="my-4">
             <label class="block text-gray-300 dark:text-gray-300 text-sm font-bold mb-2" for="password">Password</label>

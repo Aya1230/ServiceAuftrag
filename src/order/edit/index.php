@@ -20,10 +20,10 @@ if (isset($_POST["create_order"])) {
             case "addTask":
                 echo "<script>alert('Auftrag wurde erstellt');window.location.replace('../');</script>";
                 break;
-                
+
             case "duplicateTask":
                 echo "<script>alert('Auftrag existiert bereits')</script>";
-                break;    
+                break;
         }
     }
 

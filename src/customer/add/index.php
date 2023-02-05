@@ -59,13 +59,13 @@ session_start();
                     } else {
                         $stmt = $conn->prepare("INSERT INTO kunde (anrede, name, tel, phone, adresse, plz, ort) VALUES (:anrede, :name, :tel, :phone, :adresse, :plz, :ort)");
                         $stmt->execute([
-                            ':anrede' => $_POST['anrede'],
-                            ':name' => $_POST['name'],
-                            ':tel' => $_POST['tel'],
-                            ':phone' => $_POST['phone'],
-                            ':adresse' => $_POST['adresse'],
-                            ':plz' => $_POST['plz'],
-                            ':ort' => $_POST['ort']
+                            ':anrede' => strip_tags(htmlspecialchars($_POST['anrede'])),
+                            ':name' => strip_tags(htmlspecialchars($_POST['name'])),
+                            ':tel' => strip_tags(htmlspecialchars($_POST['tel'])),
+                            ':phone' => strip_tags(htmlspecialchars($_POST['phone'])),
+                            ':adresse' => strip_tags(htmlspecialchars($_POST['adresse'])),
+                            ':plz' => strip_tags(htmlspecialchars($_POST['plz'])),
+                            ':ort' => strip_tags(htmlspecialchars($_POST['ort']))
                         ]);
 
                         error("register");

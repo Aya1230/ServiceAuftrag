@@ -70,15 +70,13 @@
                             echo "<td class='px-6 py-4'>" . $row['date'] . "</td>";
                             echo "<td class='px-6 py-4'>" . $row['desired_date'] . "</td>";
                             echo "<td class='px-6 py-4'>" . $row['u_id'] . "</td>";
-                            echo "<td class='px-6 py-4'>" . "<a href='details/' class='font-medium text-blue-600 dark:text-blue-500 hover:underline'>Details</a>" . "</td>";
+                            echo "<td class='px-6 py-4'>" . "<a href='details/?a_nr=" . $row['auftr_nr'] . "' class='font-medium text-blue-600 dark:text-blue-500 hover:underline'>Details</a>" . "</td>";
                             echo "</tr>";
                         }
                     } else {
                         echo "<td class='bg-white border-b bg-gray-800 border-gray-700 px-6 py-4' colspan='9'>Keine Aufträge vorhanden</td>";
                     }
                     ?>
-
-
                 </tr>
             </tbody>
         </table>

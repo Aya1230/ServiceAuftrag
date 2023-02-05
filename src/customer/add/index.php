@@ -26,65 +26,52 @@ session_start();
                 </a>
                 <h1 class="mt-6 text-2xl font-bold text-white sm:text-3xl md:text-4xl">Neuen Kunden hinzufügen</h1>
                 <?php
-                if (!isset($_SESSION['login']) && $_SESSION['login'] == 1){
-                    header("Location: ../../login/");
+                /*
+                if (!isset($_SESSION['login'])){
+                    header("Location: ../login/");
                     die;
                 }
+                */
 
                 if (isset($_POST["button"])) {
                     function error(string $error): void
                     {
-
                         switch ($error) {
                             case "customerExists":
-                                $message = "<p class='block text-gray-300 text-gray-300 text-sm font-bold mb-2'>" . "<span class='text-red-800'>Error: </span>" . 'Fehlerhafter Input!' . "</p>";
+                                echo "<script>alert('Error: Fehlerhafter Input');</script>";
                                 break;
                             case "register":
-                                $message = "<p class='block text-gray-300 text-gray-300 text-sm font-bold mb-2'>" . 'User wurde erstellt' . "</p>";
+                                echo "<script>alert('User wurde erstellt');window.location.replace('../');</script>";
                                 break;
                         }
 
-                        echo $message;
-                    }
-
-                    function redirect() {
-                        header('Location: ../');
-                        exit;
                     }
 
                     require '../../php/include/db.php';
 
-                    $anrede = strip_tags(htmlspecialchars($_POST['anrede']));
-                    $name = strip_tags(htmlspecialchars($_POST['name']));
-                    $tel = strip_tags(htmlspecialchars($_POST['tel']));
-                    $phone = strip_tags(htmlspecialchars($_POST['phone']));
-                    $adresse = strip_tags(htmlspecialchars($_POST['street']));
-                    $ort = strip_tags(htmlspecialchars($_POST['ort']));
-                    $plz = strip_tags(htmlspecialchars($_POST['plz']));
-
-
                     $stmt = $conn->prepare("SELECT * FROM kunde WHERE name = :name");
-                    $stmt->bindParam(':name', $name);
+                    $stmt->bindParam(':name', $_POST['name']);
                     $stmt->execute();
                     $result = $stmt->fetch();
-
 
                     if ($result) {
                         error("customerExists");
                     } else {
                         $stmt = $conn->prepare("INSERT INTO kunde (anrede, name, tel, phone, adresse, plz, ort) VALUES (:anrede, :name, :tel, :phone, :adresse, :plz, :ort)");
-                        $stmt->bindParam(':anrede', $anrede);
-                        $stmt->bindParam(':name', $name);
-                        $stmt->bindParam(':tel', $tel);
-                        $stmt->bindParam(':phone', $phone);
-                        $stmt->bindParam(':adresse', $adresse);
-                        $stmt->bindParam(':plz', $plz);
-                        $stmt->bindParam(':ort', $ort);
-                        $stmt->execute();
+                        $stmt->execute([
+                            ':anrede' => $_POST['anrede'],
+                            ':name' => $_POST['name'],
+                            ':tel' => $_POST['tel'],
+                            ':phone' => $_POST['phone'],
+                            ':adresse' => $_POST['adresse'],
+                            ':plz' => $_POST['plz'],
+                            ':ort' => $_POST['ort']
+                        ]);
 
                         error("register");
-                        redirect();
+
                     }
+
 
                 }
                 ?>
@@ -109,8 +96,8 @@ session_start();
                         <input class="border-gray-200 bg-white text-sm placeholder-gray-500 shadow-sm border-gray-700 bg-gray-800 text-white outline-none appearance-none border border-transparent rounded w-full p-2  text-white leading-normal appearance-none focus:outline-none focus:bg-white focus:bg-gray-800 focus:border-gray-300 focus:border-gray-500 focus:text-white placeholder-white" id="phone" name="phone" placeholder="056 123 45 67" type="tel" required>
                     </div>
                     <div class="col-span-6">
-                        <label class="block text-gray-300 text-gray-300  text-sm font-bold mb-2" for="street">Strasse</label>
-                        <input class="border-gray-200 bg-white text-sm placeholder-gray-500 shadow-sm border-gray-700 bg-gray-800 text-white outline-none appearance-none border border-transparent rounded w-full p-2  text-white leading-normal appearance-none focus:outline-none focus:bg-white focus:bg-gray-800 focus:border-gray-300 focus:border-gray-500 focus:text-white placeholder-white" id="street" name="street" placeholder="Musterstrasse" type="text" required>
+                        <label class="block text-gray-300 text-gray-300  text-sm font-bold mb-2" for="adresse">Strasse</label>
+                        <input class="border-gray-200 bg-white text-sm placeholder-gray-500 shadow-sm border-gray-700 bg-gray-800 text-white outline-none appearance-none border border-transparent rounded w-full p-2  text-white leading-normal appearance-none focus:outline-none focus:bg-white focus:bg-gray-800 focus:border-gray-300 focus:border-gray-500 focus:text-white placeholder-white" id="adresse" name="adresse" placeholder="Musterstrasse" type="text" required>
                     </div>
                     <div class="col-span-6 sm:col-span-4">
                         <label for="ort" class="block text-gray-300 text-gray-300  text-sm font-bold mb-2">Ort</label>

@@ -26,10 +26,14 @@ session_start();
                 </a>
                 <h1 class="mt-6 text-2xl font-bold text-white sm:text-3xl md:text-4xl">Neuen Mitarbeiter hinzufügen</h1>
                 <?php
+                /*
                 if (!isset($_SESSION['login'])){
                     header("Location: ../login/");
                     die;
                 }
+                */
+
+
 
                 if (isset($_POST["button"])) {
                     function error(string $error): void
@@ -68,8 +72,6 @@ session_start();
                     $adresse = strip_tags(htmlspecialchars($_POST['street']));
                     $ort = strip_tags(htmlspecialchars($_POST['ort']));
                     $plz = strip_tags(htmlspecialchars($_POST['plz']));
-
-
 
 
                     $stmt = $conn->prepare("SELECT * FROM users WHERE name = :name");

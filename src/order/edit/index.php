@@ -1,63 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
+<?php
+session_start();
+?>
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
     <link rel="icon" href="../../img/icon.ico">
-    <script src="../../js/datetime.js"></script>
     <script src="../../js/checkbox.js"></script>
     <script src="../../js/select.js"></script>
+    <style>
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+            /* Firefox */
+        }
+    </style>
     <title>Auftrag erfassen</title>
 </head>
 <body class="bg-gray-900 flex items-center justify-center h-screen">
 <?php
+
+if (!isset($_SESSION['login_id']) && $_SESSION['login_b'] == "Mitarbeiter"){
+    header("Location: ../../login/");
+    die;
+}
+
 if (isset($_POST["create_order"])) {
     function error(string $error): void
     {
         switch ($error) {
-            case "addTask":
-                echo "<script>alert('Auftrag wurde erstellt');window.location.replace('../');</script>";
-                break;
-
-            case "duplicateTask":
-                echo "<script>alert('Auftrag existiert bereits')</script>";
+            case "updateTask":
+                echo "<script>alert('Auftrag wurde erfolgreich bearbeitet');window.location.replace('../');</script>";
                 break;
         }
     }
 
     require '../../php/include/db.php';
 
-    $stmt = $conn->prepare("SELECT * FROM auftrag WHERE auftr_nr = :name");
+    $stmt = $conn->prepare("UPDATE auftrag SET auftr_name=:auftr_name, details=:details, tag_nr=:tag_nr, s_nr=:s_nr, desired_date=:desired_date, anrede=:anrede, name=:name, adresse=:adresse, plz=:plz, ort=:ort, k_id=:k_id, u_id=:u_id WHERE auftr_nr=:a_nr");
     $stmt->execute([
-        ':name' => strip_tags(htmlspecialchars($_POST['auftragsname']))
+        ':auftr_name' => strip_tags(htmlspecialchars($_POST['auftragsname'])),
+        ':details' => strip_tags(htmlspecialchars($_POST['details'])),
+        ':tag_nr' => $_POST['tag'],
+        ':s_nr' => $_POST['status'],
+        ':desired_date' => $_POST['wunschtermin'],
+        ':anrede' => $_POST['anrede'],
+        ':name' => strip_tags(htmlspecialchars($_POST['name'])),
+        ':adresse' => strip_tags(htmlspecialchars($_POST['strasse'])),
+        ':plz' => strip_tags(htmlspecialchars($_POST['plz'])),
+        ':ort' => strip_tags(htmlspecialchars($_POST['ort'])),
+        ':k_id' => $_POST['kunde'],
+        ':u_id' => $_POST['user'],
+        ':a_nr' => strip_tags(htmlspecialchars($_GET['a_nr'])),
     ]);
-    $result = $stmt->fetch();
+    error("updateTask");
 
-    if ($result) {
-        error("duplicateTask");
-    } else {
-
-        // Macht ein INSERT Statement mit den Values von Auftrag
-        $stmt = $conn->prepare("INSERT INTO auftrag (auftr_name, details, tag_nr, s_nr, desired_date, anrede, name,adresse, plz, ort, u_id, k_id) VALUES (:auftr_name, :details, :tag_nr, :s_nr, :desired_date, :anrede, :name, :adresse, :plz, :ort,  :k_id, :u_id)");
-        $stmt->execute([
-            ':auftr_name' => strip_tags(htmlspecialchars($_POST['auftragsname'])),
-            ':details' => strip_tags(htmlspecialchars($_POST['details'])),
-            ':tag_nr' => $_POST['tag'],
-            ':s_nr' => $_POST['status'],
-            ':desired_date' => $_POST['wunschtermin'],
-            ':anrede' => strip_tags(htmlspecialchars($_POST['anrede'])),
-            ':name' => strip_tags(htmlspecialchars($_POST['name'])),
-            ':adresse' => strip_tags(htmlspecialchars($_POST['strasse'])),
-            ':plz' => strip_tags(htmlspecialchars($_POST['plz'])),
-            ':ort' => strip_tags(htmlspecialchars($_POST['ort'])),
-            ':k_id' => $_POST['kunde'],
-            ':u_id' => $_POST['user']
-        ]);
-        // Teilt der error function mit, dass
-        error("addTask");
-    }
 }
 ?>
 <?php
@@ -71,21 +75,29 @@ $kunde_tb = $stmt->fetchAll();
 $stmt = $conn->prepare("SELECT * FROM users");
 $stmt->execute();
 $mitarbeiter_tb = $stmt->fetchAll();
+
+if(isset($_GET['a_nr']) && !empty($_GET['a_nr'])) {
+    $stmt = $conn->prepare("SELECT * FROM auftrag WHERE auftr_nr = :a_nr");
+    $stmt->execute([
+        ':a_nr' => strip_tags(htmlspecialchars($_GET['a_nr'])),
+    ]);
+    $row_auftrag = $stmt->fetch();
+}
 ?>
 
-<form action="<?php $_SERVER['PHP_SELF'] ?>" method="post" onsubmit="return validateForm()" class="w-2/3">
+<form action="" method="post" onsubmit="return validateForm()" class="w-2/3">
     <div class="bg-gray-800 rounded-lg py-8 px-10">
-        <h2 class="text-2xl font-bold dark:text-gray-900 text-white">Neuen Auftrag hinzufügen.</h2>
+        <h2 class="text-2xl font-bold dark:text-gray-900 text-white">Auftrag bearbeiten</h2>
         <div class="flex w-full grid-cols-2 gap-16">
             <div class="col-span-1 w-1/2">
                 <h2 class="py-5 text-lg font-medium italic text-gray-400 text-white">Allgemeine Informationen</h2>
                 <div>
                     <label for="date" class="block text-sm mb-2 font-medium text-gray-300">Auftragseingang</label>
-                    <input disabled required type="datetime-local" id="date" name="date"  style="color-scheme: dark;" id="date" class="border-gray-200 bg-white text-sm placeholder-gray-500 shadow-sm border-gray-700 bg-gray-900 text-gray-500 outline-none appearance-none border border-transparent rounded w-full p-2  text-white leading-normal appearance-none focus:outline-none focus:bg-white focus:bg-gray-800 focus:border-gray-300 focus:border-gray-500 focus:text-white placeholder-white">
+                    <input disabled required type="datetime-local"  name="date" style="color-scheme: dark;" id="date" class="border-gray-200 bg-white text-sm placeholder-gray-500 shadow-sm border-gray-700 bg-gray-900 text-gray-500 outline-none appearance-none border border-transparent rounded w-full p-2  text-white leading-normal appearance-none focus:outline-none focus:bg-white focus:bg-gray-800 focus:border-gray-300 focus:border-gray-500 focus:text-white placeholder-white" value="<?php echo !empty($row_auftrag['date']) ? $row_auftrag['date'] : ''; ?>">
                 </div>
                 <div class="col-span-3 flex-1">
                     <label for="auftragsname" class="block pt-2 text-sm mb-2 font-medium text-gray-300">Auftragsname</label>
-                    <input required type="text" name="auftragsname" id="auftragsname"  class="border-gray-200 bg-white text-sm placeholder-gray-500 shadow-sm border-gray-700 bg-gray-900 text-white outline-none appearance-none border border-transparent rounded w-full p-2  text-white leading-normal appearance-none focus:outline-none focus:bg-white focus:bg-gray-800 focus:border-gray-300 focus:border-gray-500 focus:text-white placeholder-white" placeholder="Name...">
+                    <input required type="text" name="auftragsname" id="auftragsname"  class="border-gray-200 bg-white text-sm placeholder-gray-500 shadow-sm border-gray-700 bg-gray-900 text-white outline-none appearance-none border border-transparent rounded w-full p-2  text-white leading-normal appearance-none focus:outline-none focus:bg-white focus:bg-gray-800 focus:border-gray-300 focus:border-gray-500 focus:text-white placeholder-white" placeholder="Name..." value="<?php echo !empty($row_auftrag['auftr_name']) ? $row_auftrag['auftr_name'] : ''; ?>">
                 </div>
                 <div>
                     <label for="details" class="block pt-2 mb-2 text-sm font-medium text-gray-300">Details</label>
@@ -128,7 +140,7 @@ $mitarbeiter_tb = $stmt->fetchAll();
                     </div>
                     <div>
                         <label for="termin" class="block pt-2 text-sm mb-2 font-medium text-gray-300">Terminwunsch</label>
-                        <input required type="date" id="termin" name="wunschtermin" style="color-scheme: dark;"   class="border-gray-200 bg-white text-sm placeholder-gray-500 shadow-sm border-gray-700 bg-gray-900 text-gray-500 outline-none appearance-none border border-transparent rounded w-full p-2  text-white leading-normal appearance-none focus:outline-none focus:bg-white focus:bg-gray-800 focus:border-gray-300 focus:border-gray-500 focus:text-white placeholder-white">
+                        <input required type="date" id="termin" name="wunschtermin" style="color-scheme: dark;"   class="border-gray-200 bg-white text-sm placeholder-gray-500 shadow-sm border-gray-700 bg-gray-900 text-gray-500 outline-none appearance-none border border-transparent rounded w-full p-2  text-white leading-normal appearance-none focus:outline-none focus:bg-white focus:bg-gray-800 focus:border-gray-300 focus:border-gray-500 focus:text-white placeholder-white" value="<?php echo !empty($row_auftrag['desired_date']) ? $row_auftrag['desired_date'] : ''; ?>">
                     </div>
                 </div>
             </div>
@@ -144,20 +156,20 @@ $mitarbeiter_tb = $stmt->fetchAll();
                     </div>
                     <div class="col-span-3 flex-1">
                         <label for="name" class="block text-sm mb-2 font-medium text-gray-300">Name</label>
-                        <input required type="text" name="name" id="name"  class="border-gray-200 bg-white text-sm placeholder-gray-500 shadow-sm border-gray-700 bg-gray-900 text-white outline-none appearance-none border border-transparent rounded w-full p-2  text-white leading-normal appearance-none focus:outline-none focus:bg-white focus:bg-gray-800 focus:border-gray-300 focus:border-gray-500 focus:text-white placeholder-white" placeholder="Name...">
+                        <input required type="text" name="name" id="name"  class="border-gray-200 bg-white text-sm placeholder-gray-500 shadow-sm border-gray-700 bg-gray-900 text-white outline-none appearance-none border border-transparent rounded w-full p-2  text-white leading-normal appearance-none focus:outline-none focus:bg-white focus:bg-gray-800 focus:border-gray-300 focus:border-gray-500 focus:text-white placeholder-white" placeholder="Name..." value="<?php echo !empty($row_auftrag['name']) ? $row_auftrag['name'] : ''; ?>">
                     </div>
                 </div>
                 <label for="strasse" class="block pt-2 text-sm mb-2 font-medium text-gray-300">Strasse</label>
-                <input required type="text" name="strasse" id="strasse"  class="border-gray-200 bg-white text-sm placeholder-gray-500 shadow-sm border-gray-700 bg-gray-900 text-white outline-none appearance-none border border-transparent rounded w-full p-2  text-white leading-normal appearance-none focus:outline-none focus:bg-white focus:bg-gray-800 focus:border-gray-300 focus:border-gray-500 focus:text-white placeholder-white" placeholder="Strasse...">
+                <input required type="text" name="strasse" id="strasse"  class="border-gray-200 bg-white text-sm placeholder-gray-500 shadow-sm border-gray-700 bg-gray-900 text-white outline-none appearance-none border border-transparent rounded w-full p-2  text-white leading-normal appearance-none focus:outline-none focus:bg-white focus:bg-gray-800 focus:border-gray-300 focus:border-gray-500 focus:text-white placeholder-white" placeholder="Strasse..." value="<?php echo !empty($row_auftrag['adresse']) ? $row_auftrag['adresse'] : ''; ?>">
                 <div>
                     <div class="grid-cols-5 gap-5 flex">
                         <div class="col-span-4 flex-1">
                             <label for="ort" class="block pt-2 text-sm mb-2 font-medium text-gray-300">Ort</label>
-                            <input required type="text" name="ort" id="ort"  class="border-gray-200 bg-white text-sm placeholder-gray-500 shadow-sm border-gray-700 bg-gray-900 text-white outline-none appearance-none border border-transparent rounded w-full p-2  text-white leading-normal appearance-none focus:outline-none focus:bg-white focus:bg-gray-800 focus:border-gray-300 focus:border-gray-500 focus:text-white placeholder-white" placeholder="Ort...">
+                            <input required type="text" name="ort" id="ort"  class="border-gray-200 bg-white text-sm placeholder-gray-500 shadow-sm border-gray-700 bg-gray-900 text-white outline-none appearance-none border border-transparent rounded w-full p-2  text-white leading-normal appearance-none focus:outline-none focus:bg-white focus:bg-gray-800 focus:border-gray-300 focus:border-gray-500 focus:text-white placeholder-white" placeholder="Ort..." value="<?php echo !empty($row_auftrag['ort']) ? $row_auftrag['ort'] : ''; ?>">
                         </div>
                         <div class="col-span-1">
                             <label for="plz" class="block pt-2 text-sm mb-2 font-medium text-gray-300">Postleitzahl</label>
-                            <input required type="number" name="plz" id="plz" min="1000" max="9999"  class="border-gray-200 bg-white text-sm placeholder-gray-500 shadow-sm border-gray-700 bg-gray-900 text-white outline-none appearance-none border border-transparent rounded w-full p-2  text-white leading-normal appearance-none focus:outline-none focus:bg-white focus:bg-gray-800 focus:border-gray-300 focus:border-gray-500 focus:text-white placeholder-white" placeholder="Postleitzahl...">
+                            <input required type="number" name="plz" id="plz" min="1000" max="9999"  class="border-gray-200 bg-white text-sm placeholder-gray-500 shadow-sm border-gray-700 bg-gray-900 text-white outline-none appearance-none border border-transparent rounded w-full p-2  text-white leading-normal appearance-none focus:outline-none focus:bg-white focus:bg-gray-800 focus:border-gray-300 focus:border-gray-500 focus:text-white placeholder-white" placeholder="Postleitzahl..." value="<?php echo !empty($row_auftrag['plz']) ? $row_auftrag['plz'] : ''; ?>">
                         </div>
                     </div>
                 </div>

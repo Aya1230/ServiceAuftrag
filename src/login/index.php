@@ -32,7 +32,7 @@ session_start();
                     return false;
 
                 case "login":
-                    echo "<script>alert('Sie wurden eingelogt...');window.location.replace('../order/');</script>";
+                    echo "<script>alert('Sie wurden eingelogt...');window.location.replace('../');</script>";
                     return true;
             }
         }
@@ -50,7 +50,9 @@ session_start();
 
         if ($row == true) {
                 if (hash('sha512', $pw) == $row['pw']) {
-                    $_SESSION['login'] = "login successful";
+                    $_SESSION['login_id'] = 'HelloWorld!';
+                    $_SESSION['login_b'] = $row['berechtigungen'];
+                    $_SESSION['login_n'] = $row['name'];
 
                     $result = error("login");
 
@@ -65,18 +67,17 @@ session_start();
 
     ?>
 
-    <form action="<?php $_SERVER['PHP_SELF'] ?>" class="w-full max-w-md mx-auto bg-gray-800 shadow-md rounded px-8 py-6 mt-8" method="post">
+    <form action="" class="w-full max-w-md mx-auto bg-gray-800 shadow-md rounded px-8 py-6 mt-8" method="post">
         <h1 class="text-xl font-black text-gray-100">Enter your username and password</h1>
         <div class="my-4 mt-8">
             <label class="block text-gray-300 dark:text-gray-300  text-sm font-bold mb-2" for="username">Username</label>
-            <input class="bg-gray-900 outline-none appearance-none border border-transparent rounded w-full p-2 text-gray-700 dark:text-gray-300 leading-normal appearance-none focus:outline-none focus:bg-white dark:focus:bg-gray-800 focus:border-gray-300 dark:focus:border-gray-500" id="name" name="name" <?php if(empty($_SESSION['name'])) { echo "placeholder='Max Mustermann'";} else { echo "value='{$_SESSION['name']}'";;} ?>  type="text" required>
+            <input class="bg-gray-900 outline-none appearance-none border border-transparent rounded w-full p-2 text-gray-700 dark:text-gray-300 leading-normal appearance-none focus:outline-none focus:bg-white dark:focus:bg-gray-800 focus:border-gray-300 dark:focus:border-gray-500" id="name" name="name" type="text" required>
         </div>
         <div class="my-4">
             <label class="block text-gray-300 dark:text-gray-300 text-sm font-bold mb-2" for="password">Password</label>
             <input class="transition bg-gray-900 outline-none appearance-none border border-transparent rounded w-full p-2 text-gray-700 dark:text-gray-300 leading-normal appearance-none focus:outline-none focus:bg-white dark:focus:bg-gray-800 focus:border-gray-300 dark:focus:border-gray-500" id="password" name="password" placeholder="Password..." type="password" required>
         </div>
         <button class="button mt-4 w-full bg-indigo-500 py-2.5 rounded" type="submit">Login →</button>
-        <p class="text-gray-300 dark:text-gray-300 text-xs my-2">No account yet? <a href="../register" class="underline text-gray-500 dark:text-gray-50">Click here</a> to make one.</p>
     </form>
 
 </body>

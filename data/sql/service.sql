@@ -14,6 +14,10 @@ CREATE TABLE IF NOT EXISTS users (
                                      berechtigungen ENUM('Mitarbeiter', 'Bereichsleiter', 'Administator') NOT NULL DEFAULT 'Mitarbeiter'
 );
 
+INSERT INTO users (anrede, name, pw, tel, phone, adresse, plz, ort, berechtigungen)
+VALUE ('Unbekannt', 'root', '99adc231b045331e514a516b4b7680f588e3823213abe901738bc3ad67b2f6fcb3c64efb93d18002588d3ccc1a49efbae1ce20cb43df36b38651f11fa75678e8', '123123', '123123', 'Strasse 123', 1234, 'Ort','Administator')
+;
+
 CREATE TABLE IF NOT EXISTS kunde (
                                      k_id INT PRIMARY KEY AUTO_INCREMENT,
                                      anrede ENUM('Herr', 'Frau', 'Unbekannt') NOT NULL DEFAULT 'Unbekannt',

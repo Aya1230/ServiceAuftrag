@@ -1,10 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+<?php
+session_start();
+?>
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
+    <link rel="icon" href="../../img/icon.ico">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
     <script src="../../js/pdf.js"></script>
     <title>Auftragsdetails</title>
@@ -12,32 +16,38 @@
 <body class="bg-gray-900 flex items-center justify-center h-screen">
 
 <div id="pdf" class="w-1/2">
-    <?php
-    require '../../php/include/db.php';
-    $successful = 0;
+<?php
+if (!isset($_SESSION['login_id'])) {
+    header("Location: ../../login/");
+    die;
+}
 
-    if(isset($_GET['a_nr']) && !empty($_GET['a_nr'])) {
-        $stmt = $conn->prepare("SELECT * FROM auftrag WHERE auftr_nr = :a_nr");
-        $stmt->execute([
-            ':a_nr' => strip_tags(htmlspecialchars($_GET['a_nr'])),
-        ]);
-        $row_auftrag = $stmt->fetch();
+require '../../php/include/db.php';
+$successful = 0;
 
-        $successful = 1;
+if(isset($_GET['a_nr']) && !empty($_GET['a_nr'])) {
+    $stmt = $conn->prepare("SELECT * FROM auftrag JOIN users ON auftrag.u_id = users.u_id WHERE berechtigungen = :berechtigungen");
+    $stmt->execute([
+        ':berechtigungen' => $_SESSION['login_b']
+    ]);
+    $row_auftrag = $stmt->fetch();
 
-        $stmt = $conn->prepare("SELECT * FROM kunde WHERE k_id = :k_id");
-        $stmt->execute([
-            ':k_id' => $row_auftrag['k_id']
-        ]);
-        $row_kunde = $stmt->fetch();
 
-        $stmt = $conn->prepare("SELECT * FROM users WHERE u_id = :u_id");
-        $stmt->execute([
-            ':u_id' => $row_auftrag['u_id']
-        ]);
-        $row_user = $stmt->fetch();
-    }
-    ?>
+    $successful = 1;
+
+    $stmt = $conn->prepare("SELECT * FROM kunde WHERE k_id = :k_id");
+    $stmt->execute([
+        ':k_id' => $row_auftrag['k_id']
+    ]);
+    $row_kunde = $stmt->fetch();
+
+    $stmt = $conn->prepare("SELECT * FROM users WHERE u_id = :u_id");
+    $stmt->execute([
+        ':u_id' => $row_auftrag['u_id']
+    ]);
+    $row_user = $stmt->fetch();
+}
+?>
     <div class="bg-gray-800 rounded-lg py-8 px-10">
         <div class="flex flex-1 mx-auto items-center text-gray-400">
             <?php
@@ -139,7 +149,6 @@
                                     break;
                             }
                             echo "</ul>";
-
                         }
                         ?>
                     </div>

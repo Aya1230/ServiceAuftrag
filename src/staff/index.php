@@ -31,48 +31,47 @@ session_start();
                     <th scope="col" class="px-6 py-3">Ort</th>
                     <th scope="col" class="px-6 py-3">PLZ</th>
                     <th scope="col" class="px-6 py-3">Berechtigungen</th>
-                    <!--<th scope="col" class="px-6 py-3">
-                      <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Bearbeiten</a>
-                    </th>-->
                 </tr>
             </thead>
             <tbody>
                 <tr class="bg-white border-b bg-gray-800 border-gray-700">
                     <?php
-                    if (!isset($_SESSION['login'])){
-                        header("Location: ../login/");
+                    if (!isset($_SESSION['login_id']) && $_SESSION['login_b'] == "Mitarbeiter"){
+                        header("Location: ../../login/");
                         die;
                     }
 
-                        require '../php/include/db.php';
+                    require '../php/include/db.php';
 
-                        $stmt = $conn->prepare("SELECT * FROM users");
-                        $stmt->execute();
+                    $stmt = $conn->prepare("SELECT * FROM users");
+                    $stmt->execute();
 
-                        if ($stmt->rowCount() > 0) {
-                            foreach ($stmt as $row) {
-                                echo "<tr class='bg-white border-b bg-gray-800 border-gray-700 text-center'>";
-                                echo "<th scope='row' class='tx-6 py-4 font-medium dark:text-gray-900 whitespace-nowrap text-white'>" . $row['u_id'] . "</th>";
-                                echo "<td class='px-6 py-4'>" . $row['anrede'] . "</td>";
-                                echo "<td class='px-6 py-4'>" . $row['name'] . "</td>";
-                                echo "<td class='px-6 py-4' id='phone'>" . $row['tel'] . "</td>";
-                                echo "<td class='px-6 py-4' id='phone'>" . $row['phone'] . "</td>";
-                                echo "<td class='px-6 py-4'>" . $row['adresse'] . "</td>";
-                                echo "<td class='px-6 py-4'>" . $row['plz'] . "</td>";
-                                echo "<td class='px-6 py-4'>" . $row['ort'] . "</td>";
-                                echo "<td class='px-6 py-4'>" . $row['berechtigungen'] . "</td>";
-                                echo "</tr>";
-                            }
-                        } else {
-                            echo "<td class='bg-white border-b bg-gray-800 border-gray-700 px-6 py-4' colspan='9'>Keine Mitarbeiter vorhanden</td>";
+                    if ($stmt->rowCount() > 0) {
+                        foreach ($stmt as $row) {
+                            echo "<tr class='bg-white border-b bg-gray-800 border-gray-700 text-center'>";
+                            echo "<th scope='row' class='tx-6 py-4 font-medium dark:text-gray-900 whitespace-nowrap text-white'>" . $row['u_id'] . "</th>";
+                            echo "<td class='px-6 py-4'>" . $row['anrede'] . "</td>";
+                            echo "<td class='px-6 py-4'>" . $row['name'] . "</td>";
+                            echo "<td class='px-6 py-4' id='phone'>" . $row['tel'] . "</td>";
+                            echo "<td class='px-6 py-4' id='phone'>" . $row['phone'] . "</td>";
+                            echo "<td class='px-6 py-4'>" . $row['adresse'] . "</td>";
+                            echo "<td class='px-6 py-4'>" . $row['plz'] . "</td>";
+                            echo "<td class='px-6 py-4'>" . $row['ort'] . "</td>";
+                            echo "<td class='px-6 py-4'>" . $row['berechtigungen'] . "</td>";
+                            echo "</tr>";
                         }
+                    } else {
+                        echo "<td class='bg-white border-b bg-gray-800 border-gray-700 px-6 py-4' colspan='9'>Keine Mitarbeiter vorhanden</td>";
+                    }
                     ?>
-                    <!--<td class="px-6 py-4">
-                        <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Details</a>
-                    </td>-->
                 </tr>
             </tbody>
         </table>
+        <div class="flex flex-1 w-2/3 mx-auto items-center">
+            <button onclick="location.href='../'" type="button" class="w-32 mt-5 text-white bg-red-700 hover:bg-red-800 font-medium rounded-lg text-sm px-5 py-3 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-red-800">
+                Zurück
+            </button>
+        </div>
     </div>
 </body>
 </html>

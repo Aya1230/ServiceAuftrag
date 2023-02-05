@@ -1,5 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
+<?php
+session_start();
+?>
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -9,10 +12,28 @@
     <script src="../../js/datetime.js"></script>
     <script src="../../js/checkbox.js"></script>
     <script src="../../js/select.js"></script>
+    <style>
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+            /* Firefox */
+        }
+    </style>
     <title>Auftrag erfassen</title>
 </head>
 <body class="bg-gray-900 flex items-center justify-center h-screen">
 <?php
+require '../../php/include/db.php';
+
+if (!isset($_SESSION['login_id']) && $_SESSION['login_b'] == "Mitarbeiter"){
+    header("Location: ../../login/");
+    die;
+}
+
 if (isset($_POST["create_order"])) {
     function error(string $error): void
     {
@@ -27,7 +48,7 @@ if (isset($_POST["create_order"])) {
         }
     }
 
-    require '../../php/include/db.php';
+
 
     $stmt = $conn->prepare("SELECT * FROM auftrag WHERE auftr_nr = :name");
     $stmt->execute([
@@ -38,16 +59,14 @@ if (isset($_POST["create_order"])) {
     if ($result) {
         error("duplicateTask");
     } else {
-
-        // Macht ein INSERT Statement mit den Values von Auftrag
-        $stmt = $conn->prepare("INSERT INTO auftrag (auftr_name, details, tag_nr, s_nr, desired_date, anrede, name,adresse, plz, ort, u_id, k_id) VALUES (:auftr_name, :details, :tag_nr, :s_nr, :desired_date, :anrede, :name, :adresse, :plz, :ort,  :k_id, :u_id)");
+        $stmt = $conn->prepare("INSERT INTO auftrag (auftr_name, details, tag_nr, s_nr, desired_date, anrede, name,adresse, plz, ort, u_id, k_id) VALUES (:auftr_name, :details, :tag_nr, :s_nr, :desired_date, :anrede, :name, :adresse, :plz, :ort,  :u_id, :K_id)");
         $stmt->execute([
             ':auftr_name' => strip_tags(htmlspecialchars($_POST['auftragsname'])),
             ':details' => strip_tags(htmlspecialchars($_POST['details'])),
             ':tag_nr' => $_POST['tag'],
             ':s_nr' => $_POST['status'],
             ':desired_date' => $_POST['wunschtermin'],
-            ':anrede' => strip_tags(htmlspecialchars($_POST['anrede'])),
+            ':anrede' => $_POST['anrede'],
             ':name' => strip_tags(htmlspecialchars($_POST['name'])),
             ':adresse' => strip_tags(htmlspecialchars($_POST['strasse'])),
             ':plz' => strip_tags(htmlspecialchars($_POST['plz'])),
@@ -55,7 +74,6 @@ if (isset($_POST["create_order"])) {
             ':k_id' => $_POST['kunde'],
             ':u_id' => $_POST['user']
         ]);
-        // Teilt der error function mit, dass
         error("addTask");
     }
 }
@@ -71,17 +89,18 @@ $kunde_tb = $stmt->fetchAll();
 $stmt = $conn->prepare("SELECT * FROM users");
 $stmt->execute();
 $mitarbeiter_tb = $stmt->fetchAll();
+
 ?>
 
-<form action="<?php $_SERVER['PHP_SELF'] ?>" method="post" onsubmit="return validateForm()" class="w-2/3">
+<form action="<?php $_SERVER['PHP_SELF'] ?>" method="post" class="w-2/3">
     <div class="bg-gray-800 rounded-lg py-8 px-10">
-        <h2 class="text-2xl font-bold dark:text-gray-900 text-white">Neuen Auftrag hinzufügen.</h2>
+        <h2 class="text-2xl font-bold dark:text-gray-900 text-white">Neuen Auftrag hinzufügen</h2>
         <div class="flex w-full grid-cols-2 gap-16">
             <div class="col-span-1 w-1/2">
                 <h2 class="py-5 text-lg font-medium italic text-gray-400 text-white">Allgemeine Informationen</h2>
                 <div>
                     <label for="date" class="block text-sm mb-2 font-medium text-gray-300">Auftragseingang</label>
-                    <input disabled required type="datetime-local" id="date" name="date"  style="color-scheme: dark;" id="date" class="border-gray-200 bg-white text-sm placeholder-gray-500 shadow-sm border-gray-700 bg-gray-900 text-gray-500 outline-none appearance-none border border-transparent rounded w-full p-2  text-white leading-normal appearance-none focus:outline-none focus:bg-white focus:bg-gray-800 focus:border-gray-300 focus:border-gray-500 focus:text-white placeholder-white">
+                    <input disabled required type="datetime-local" id="date" name="date"  style="color-scheme: dark;" id="date" class="border-gray-200 bg-white text-sm placeholder-gray-500 shadow-sm border-gray-700 bg-gray-900 outline-none appearance-none border border-transparent rounded w-full p-2  text-white leading-normal appearance-none focus:outline-none focus:bg-white focus:bg-gray-800 focus:border-gray-300 focus:border-gray-500 focus:text-white placeholder-white" >
                 </div>
                 <div class="col-span-3 flex-1">
                     <label for="auftragsname" class="block pt-2 text-sm mb-2 font-medium text-gray-300">Auftragsname</label>
@@ -128,7 +147,7 @@ $mitarbeiter_tb = $stmt->fetchAll();
                     </div>
                     <div>
                         <label for="termin" class="block pt-2 text-sm mb-2 font-medium text-gray-300">Terminwunsch</label>
-                        <input required type="date" id="termin" name="wunschtermin" style="color-scheme: dark;"   class="border-gray-200 bg-white text-sm placeholder-gray-500 shadow-sm border-gray-700 bg-gray-900 text-gray-500 outline-none appearance-none border border-transparent rounded w-full p-2  text-white leading-normal appearance-none focus:outline-none focus:bg-white focus:bg-gray-800 focus:border-gray-300 focus:border-gray-500 focus:text-white placeholder-white">
+                        <input required type="date" id="termin" name="wunschtermin" style="color-scheme: dark;"   class="border-gray-200 bg-white text-sm placeholder-gray-500 shadow-sm border-gray-700 bg-gray-900 outline-none appearance-none border border-transparent rounded w-full p-2  text-white leading-normal appearance-none focus:outline-none focus:bg-white focus:bg-gray-800 focus:border-gray-300 focus:border-gray-500 focus:text-white placeholder-white">
                     </div>
                 </div>
             </div>
@@ -137,7 +156,7 @@ $mitarbeiter_tb = $stmt->fetchAll();
                 <div class="grid-cols-5 gap-5 flex">
                     <div class="col-span-2">
                         <label for="anrede" class="block mb-2 text-sm font-medium text-gray-300">Anrede</label>
-                        <select required name="anrede"  id="anrede" class="border-gray-200 bg-white text-sm placeholder-gray-500 shadow-sm border-gray-700 bg-gray-900 text-gray-500 border border-transparent rounded w-full p-2  text-white leading-normal  focus:outline-none focus:bg-white focus:bg-gray-800 focus:border-gray-300 focus:border-gray-500 focus:text-white placeholder-white">
+                        <select required name="anrede"  id="anrede" class="border-gray-200 bg-white text-sm placeholder-gray-500 shadow-sm border-gray-700 bg-gray-900 border border-transparent rounded w-full p-2  text-white leading-normal  focus:outline-none focus:bg-white focus:bg-gray-800 focus:border-gray-300 focus:border-gray-500 focus:text-white placeholder-white">
                             <option selected>Herr</option>
                             <option>Frau</option>
                         </select>
@@ -165,10 +184,8 @@ $mitarbeiter_tb = $stmt->fetchAll();
                     <h2 class="py-5 text-lg font-medium italic text-gray-400 text-white">Kundeninformationen</h2>
                     <label for="kunde" class="block mt-2 mb-2 text-sm font-medium text-gray-300">Kunde</label>
                     <?php
-
-
                     if ($kunde_tb == true) {
-                        echo "<select required name='kunde' id='kunde' class='border-gray-200 bg-white text-sm placeholder-gray-500 shadow-sm border-gray-700 bg-gray-900 text-white outline-none appearance-none border border-transparent rounded w-full p-2  text-white leading-normal appearance-none focus:outline-none focus:bg-white focus:bg-gray-800 focus:border-gray-300 focus:border-gray-500 focus:text-white placeholder-white'>";
+                        echo "<select required name='kunde' id='kunde' class='border-gray-200 bg-white text-sm placeholder-gray-500 shadow-sm border-gray-700 bg-gray-900 text-white border border-transparent rounded w-full p-2  text-white focus:outline-none focus:bg-white focus:bg-gray-800 focus:border-gray-300 focus:border-gray-500 focus:text-white placeholder-white'>";
                         foreach ($kunde_tb as $row) {
                             echo "<option value='" . $row['k_id'] . "'>" . $row['name'] . "</option>";
                         }
@@ -185,7 +202,7 @@ $mitarbeiter_tb = $stmt->fetchAll();
                         <h2 class="text-sm font-medium italic text-gray-300 mb-1">Kundeninformationen</h2>
                         <?php
                         if ($stmt->rowCount() > 0) {
-                            if(!isset($_GET["k_id"]) && empty($_GET["k_id"])) {
+                            if(!isset($_GET["k_id"])) {
                                 echo "<p>" . $row['anrede'] . "</p>";
                                 echo "<p>" . $row['name'] . "</p>";
                                 echo "<p>" . $row['adresse'] . "</p>";
@@ -212,7 +229,7 @@ $mitarbeiter_tb = $stmt->fetchAll();
                     <label for="kunde" class="block mt-2 mb-2 text-sm font-medium text-gray-300">Zu Mitarbeiter zuweisen</label>
                     <?php
                     if ($mitarbeiter_tb == true) {
-                        echo "<select required name='user' id='user' class='border-gray-200 bg-white text-sm placeholder-gray-500 shadow-sm border-gray-700 bg-gray-900 text-white outline-none appearance-none border border-transparent rounded w-full p-2  text-white leading-normal appearance-none focus:outline-none focus:bg-white focus:bg-gray-800 focus:border-gray-300 focus:border-gray-500 focus:text-white placeholder-white'>";
+                        echo "<select required name='user' id='user' class='border-gray-200 bg-white text-sm placeholder-gray-500 shadow-sm border-gray-700 bg-gray-900 text-white border border-transparent rounded w-full p-2 text-white focus:outline-none focus:bg-white focus:bg-gray-800 focus:border-gray-300 focus:border-gray-500 focus:text-white placeholder-white'>";
                         foreach ($mitarbeiter_tb as $row) {
                             echo "<option value='" . $row['u_id'] . "'>" . $row['name'] . "</option>";
                         }
@@ -229,7 +246,7 @@ $mitarbeiter_tb = $stmt->fetchAll();
     </div>
     <div class="flex-auto w-2/3 items-center">
         <button onclick="location.href='../'" type="button" class="w-32 mt-5 text-white text-center bg-red-700 hover:bg-red-800 font-medium rounded-lg text-sm px-5 py-3 mr-2 mb-2">Abbrechen</button>
-        <input type="submit" <?php if (!($stmt->rowCount() > 0)) echo "disabled"?> name="create_order" value="Hinzufügen" class="w-80 text-white text-center bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm mt-5 px-5 py-3 mb-2"></input>
+        <button onclick="validateForm()" <?php if (!($stmt->rowCount() > 0)) echo "disabled"?>  name="create_order" class="w-80 text-white text-center bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm mt-5 px-5 py-3 mb-2">Hinzufügen</button>
     </div>
 </form>
 </body>

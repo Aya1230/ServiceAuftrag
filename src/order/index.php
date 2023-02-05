@@ -1,5 +1,8 @@
 <!DOCTYPE html>
 <html lang="de">
+<?php
+session_start();
+?>
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -12,7 +15,7 @@
     <div class="w-full">
         <div class="flex flex-1 w-2/3 mx-auto items-center">
             <h1 class="w-full mx-auto uppercase text-4xl font-bold py-4 text-white">Auftragsübersicht</h1>
-            <button onclick="location.href='new/'" type="button" class="w-96 text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-3 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+            <button onclick="location.href='add/'" type="button" class="w-96 text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-3 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
                 Neuer Auftrag 
             </button>
         </div>
@@ -27,6 +30,7 @@
                     <th scope="col" class="px-6 py-3">Wunschtermin</th>
                     <th scope="col" class="px-6 py-3">Aufgabe zugewiesen</th>
                     <th scope="col" class="px-6 py-3">Details</th>
+                    <th scope="col" class="px-6 py-3">Delete</th>
                 </tr>
             </thead>
             <tbody>
@@ -34,8 +38,15 @@
                     <?php
                     require '../php/include/db.php';
 
-                    $stmt = $conn->prepare("SELECT * FROM auftrag");
-                    $stmt->execute();
+                    if (!isset($_SESSION['login_id'])) {
+                        header("Location: ../login/");
+                        die;
+                    }
+
+                    $stmt = $conn->prepare("SELECT * FROM auftrag JOIN users ON auftrag.u_id = users.u_id WHERE berechtigungen = :berechtigungen");
+                    $stmt->execute([
+                        ':berechtigungen' => $_SESSION['login_b']
+                    ]);
 
                     if ($stmt->rowCount() > 0) {
                         foreach ($stmt as $row) {
@@ -70,11 +81,20 @@
                             echo "<td class='px-6 py-4'>" . $row['date'] . "</td>";
                             echo "<td class='px-6 py-4'>" . $row['desired_date'] . "</td>";
                             echo "<td class='px-6 py-4'>" . $row['u_id'] . "</td>";
-                            echo "<td class='px-6 py-4'>" . "<a href='details/?a_nr=" . $row['auftr_nr'] . "' class='font-medium text-blue-600 dark:text-blue-500 hover:underline'>Details</a>" . "</td>";
+                            echo "<td class='px-6 py-4'>" . "<a href='details/?a_nr=" . $row['auftr_nr'] . "' class='font-medium text-blue-600 dark:text-blue-400 hover:underline'>Details</a>" . "</td>";
+                            echo "<td class='px-6 py-4'>" . "<a href='?del_nr=" . $row['auftr_nr'] . "' class='font-medium text-red-600 dark:text-blue-400 hover:underline'>Delete</a>" . "</td>";
                             echo "</tr>";
                         }
                     } else {
                         echo "<td class='bg-white border-b bg-gray-800 border-gray-700 px-6 py-4' colspan='9'>Keine Aufträge vorhanden</td>";
+                    }
+                    ?>
+                    <?php
+                    if(isset($_GET['del_nr']) && !empty($_GET['del_nr'])) {
+                        $stmt = $conn->prepare("DELETE FROM auftrag WHERE auftr_nr = :del_nr");
+                        $stmt->execute([
+                            ':del_nr' => strip_tags(htmlspecialchars($_GET['del_nr']))
+                        ]);
                     }
                     ?>
                 </tr>

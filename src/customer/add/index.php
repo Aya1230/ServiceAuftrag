@@ -12,6 +12,17 @@ session_start();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
     <link rel="icon" type="image/png" sizes="32x32" href="../../img/icon.ico">
+    <style>
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+            /* Firefox */
+        }
+    </style>
 </head>
 <body class="flex flex-col h-full bg-gray-900 bg-slate-900">
 <section class="bg-white bg-gray-900">
@@ -26,12 +37,10 @@ session_start();
                 </a>
                 <h1 class="mt-6 text-2xl font-bold text-white sm:text-3xl md:text-4xl">Neuen Kunden hinzufügen</h1>
                 <?php
-                /*
-                if (!isset($_SESSION['login'])){
-                    header("Location: ../login/");
+                if (!isset($_SESSION['login_id'])){
+                    header("Location: ../../login/");
                     die;
                 }
-                */
 
                 if (isset($_POST["button"])) {
                     function error(string $error): void
@@ -75,7 +84,7 @@ session_start();
 
                 }
                 ?>
-                <form action="<?php $_SERVER['PHP_SELF'] ?>" method="post" class="mt-8 grid grid-cols-6 gap-6">
+                <form action="" method="post" class="mt-8 grid grid-cols-6 gap-6">
                 <div class="col-span-6 sm:col-span-2">
                     <label for="anrede" class="block mb-2 text-sm font-medium text-gray-300">Anrede</label>
                     <select required="" name="anrede" id="anrede" class="border-gray-200 bg-white text-gray-400 text-sm shadow-sm border-gray-700 bg-gray-800  outline-none appearance-none border border-transparent rounded w-full p-2 leading-normal appearance-none focus:outline-none focus:bg-white focus:bg-gray-800 focus:border-gray-300 focus:border-gray-500">
@@ -89,11 +98,11 @@ session_start();
                     </div>
                     <div class="col-span-6 sm:col-span-3">
                         <label for="tel" class="block text-gray-300 text-gray-300  text-sm font-bold mb-2">Telefonnummer</label>
-                        <input class="border-gray-200 bg-white text-sm placeholder-gray-500 shadow-sm border-gray-700 bg-gray-800 text-white outline-none appearance-none border border-transparent rounded w-full p-2  text-white leading-normal appearance-none focus:outline-none focus:bg-white focus:bg-gray-800 focus:border-gray-300 focus:border-gray-500 focus:text-white placeholder-white" id="tel" name="tel" placeholder="076 123 45 67" type="tel" required>
+                        <input class="border-gray-200 bg-white text-sm placeholder-gray-500 shadow-sm border-gray-700 bg-gray-800 text-white outline-none appearance-none border border-transparent rounded w-full p-2  text-white leading-normal appearance-none focus:outline-none focus:bg-white focus:bg-gray-800 focus:border-gray-300 focus:border-gray-500 focus:text-white placeholder-white" id="tel" name="tel" placeholder="076 123 45 67" type="number" min="1" required>
                     </div>
                     <div class="col-span-6 sm:col-span-3">
                         <label for="phone" class="block text-gray-300 text-gray-300  text-sm font-bold mb-2">Natel</label>
-                        <input class="border-gray-200 bg-white text-sm placeholder-gray-500 shadow-sm border-gray-700 bg-gray-800 text-white outline-none appearance-none border border-transparent rounded w-full p-2  text-white leading-normal appearance-none focus:outline-none focus:bg-white focus:bg-gray-800 focus:border-gray-300 focus:border-gray-500 focus:text-white placeholder-white" id="phone" name="phone" placeholder="056 123 45 67" type="tel" required>
+                        <input class="border-gray-200 bg-white text-sm placeholder-gray-500 shadow-sm border-gray-700 bg-gray-800 text-white outline-none appearance-none border border-transparent rounded w-full p-2  text-white leading-normal appearance-none focus:outline-none focus:bg-white focus:bg-gray-800 focus:border-gray-300 focus:border-gray-500 focus:text-white placeholder-white" id="phone" name="phone" placeholder="056 123 45 67" type="number" min="1" required>
                     </div>
                     <div class="col-span-6">
                         <label class="block text-gray-300 text-gray-300  text-sm font-bold mb-2" for="adresse">Strasse</label>

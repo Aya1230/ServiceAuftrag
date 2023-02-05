@@ -1,7 +1,6 @@
 function generatePDF() {
     var pdf = new jsPDF();
     var source = document.getElementById("pdf");
-    source.style.color = "black";
     var specialElementHandlers = {
         "#bypassme": function (element, renderer) {
             return true;

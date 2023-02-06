@@ -76,21 +76,8 @@ if (isset($_POST["create_order"])) {
     }
 }
 ?>
-<?php
-require '../../php/include/db.php';
 
-
-$stmt = $conn->prepare("SELECT * FROM kunde");
-$stmt->execute();
-$kunde_tb = $stmt->fetchAll();
-
-$stmt = $conn->prepare("SELECT * FROM users");
-$stmt->execute();
-$mitarbeiter_tb = $stmt->fetchAll();
-
-?>
-
-<form action="<?php $_SERVER['PHP_SELF'] ?>" method="post" class="w-2/3">
+<form action="" method="post" class="w-2/3">
     <div class="bg-gray-800 rounded-lg py-8 px-10">
         <h2 class="text-2xl font-bold dark:text-gray-900 text-white">Neuen Auftrag hinzufügen</h2>
         <div class="flex w-full grid-cols-2 gap-16">
@@ -182,6 +169,11 @@ $mitarbeiter_tb = $stmt->fetchAll();
                     <h2 class="py-5 text-lg font-medium italic text-gray-400 text-white">Kundeninformationen</h2>
                     <label for="kunde" class="block mt-2 mb-2 text-sm font-medium text-gray-300">Kunde</label>
                     <?php
+                    $stmt = $conn->prepare("SELECT * FROM kunde");
+                    $stmt->execute();
+                    $kunde_tb = $stmt->fetchAll();
+                    $kunde = $stmt->fetch();
+
                     if ($kunde_tb == true) {
                         echo "<select required name='kunde' id='kunde' class='border-gray-200 bg-white text-sm placeholder-gray-500 shadow-sm border-gray-700 bg-gray-900 text-white border border-transparent rounded w-full p-2  text-white focus:outline-none focus:bg-white focus:bg-gray-800 focus:border-gray-300 focus:border-gray-500 focus:text-white placeholder-white'>";
                         foreach ($kunde_tb as $row) {
@@ -201,10 +193,13 @@ $mitarbeiter_tb = $stmt->fetchAll();
                         <?php
                         if ($stmt->rowCount() > 0) {
                             if(!isset($_GET["k_id"])) {
-                                echo "<p>" . $row['anrede'] . "</p>";
-                                echo "<p>" . $row['name'] . "</p>";
-                                echo "<p>" . $row['adresse'] . "</p>";
-                                echo "<p>" . $row['plz'] . ", " . $row['ort'] . "</p>";
+                                $stmt = $conn->prepare("SELECT * FROM kunde WHERE k_id = :k_id");
+                                $stmt->execute();
+                                $kunde = $stmt->fetch();
+                                echo "<p>" . $kunde['anrede'] . "</p>";
+                                echo "<p>" . $kunde['name'] . "</p>";
+                                echo "<p>" . $kunde['adresse'] . "</p>";
+                                echo "<p>" . $kunde['plz'] . ", " . $kunde['ort'] . "</p>";
                             } else {
                                 $stmt = $conn->prepare("SELECT * FROM kunde WHERE k_id = :k_id");
                                 $stmt->execute([
@@ -226,6 +221,10 @@ $mitarbeiter_tb = $stmt->fetchAll();
                     <h2 class="py-5 text-lg font-medium italic text-gray-400 text-white">Mitarbeiter</h2>
                     <label for="kunde" class="block mt-2 mb-2 text-sm font-medium text-gray-300">Zu Mitarbeiter zuweisen</label>
                     <?php
+                    $stmt = $conn->prepare("SELECT * FROM users");
+                    $stmt->execute();
+                    $mitarbeiter_tb = $stmt->fetchAll();
+
                     if ($mitarbeiter_tb == true) {
                         echo "<select required name='user' id='user' class='border-gray-200 bg-white text-sm placeholder-gray-500 shadow-sm border-gray-700 bg-gray-900 text-white border border-transparent rounded w-full p-2 text-white focus:outline-none focus:bg-white focus:bg-gray-800 focus:border-gray-300 focus:border-gray-500 focus:text-white placeholder-white'>";
                         foreach ($mitarbeiter_tb as $row) {

@@ -26,14 +26,11 @@ require '../../php/include/db.php';
 $successful = 0;
 
 if(isset($_GET['a_nr']) && !empty($_GET['a_nr'])) {
-    $stmt = $conn->prepare("SELECT * FROM auftrag JOIN users ON auftrag.u_id = users.u_id WHERE berechtigungen = :berechtigungen");
+    $stmt = $conn->prepare("SELECT * FROM auftrag JOIN users ON auftrag.u_id = users.u_id WHERE (berechtigungen = :berechtigungen OR berechtigungen = 'Bereichsleiter' OR berechtigungen = 'Administator')  AND (berechtigungen = 'Administator' OR berechtigungen = 'Bereichsleiter' OR :berechtigungen = 'Mitarbeiter')");
     $stmt->execute([
         ':berechtigungen' => $_SESSION['login_b']
     ]);
     $row_auftrag = $stmt->fetch();
-
-
-    $successful = 1;
 
     $stmt = $conn->prepare("SELECT * FROM kunde WHERE k_id = :k_id");
     $stmt->execute([
@@ -46,6 +43,8 @@ if(isset($_GET['a_nr']) && !empty($_GET['a_nr'])) {
         ':u_id' => $row_auftrag['u_id']
     ]);
     $row_user = $stmt->fetch();
+
+    $successful = 1;
 }
 ?>
     <div class="bg-gray-800 rounded-lg py-8 px-10">

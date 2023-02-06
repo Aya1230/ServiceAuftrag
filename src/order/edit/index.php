@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <?php
 session_start();
 ?>
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -22,17 +24,19 @@ session_start();
             /* Firefox */
         }
     </style>
-    <title>Auftrag erfassen</title>
+    <title>Auftrag updaten</title>
 </head>
 <body class="bg-gray-900 flex items-center justify-center h-screen">
 <?php
+
+require '../../php/include/db.php';
 
 if (!isset($_SESSION['login_id']) && $_SESSION['login_b'] == "Mitarbeiter"){
     header("Location: ../../login/");
     die;
 }
 
-if (isset($_POST["create_order"])) {
+if (isset($_POST["create_order"]) && isset($_GET['a_nr'])) {
     function error(string $error): void
     {
         switch ($error) {
@@ -42,7 +46,6 @@ if (isset($_POST["create_order"])) {
         }
     }
 
-    require '../../php/include/db.php';
 
     $stmt = $conn->prepare("UPDATE auftrag SET auftr_name=:auftr_name, details=:details, tag_nr=:tag_nr, s_nr=:s_nr, desired_date=:desired_date, anrede=:anrede, name=:name, adresse=:adresse, plz=:plz, ort=:ort, k_id=:k_id, u_id=:u_id WHERE auftr_nr=:a_nr");
     $stmt->execute([
@@ -65,16 +68,6 @@ if (isset($_POST["create_order"])) {
 }
 ?>
 <?php
-require '../../php/include/db.php';
-
-
-$stmt = $conn->prepare("SELECT * FROM kunde");
-$stmt->execute();
-$kunde_tb = $stmt->fetchAll();
-
-$stmt = $conn->prepare("SELECT * FROM users");
-$stmt->execute();
-$mitarbeiter_tb = $stmt->fetchAll();
 
 if(isset($_GET['a_nr']) && !empty($_GET['a_nr'])) {
     $stmt = $conn->prepare("SELECT * FROM auftrag WHERE auftr_nr = :a_nr");
@@ -177,7 +170,10 @@ if(isset($_GET['a_nr']) && !empty($_GET['a_nr'])) {
                     <h2 class="py-5 text-lg font-medium italic text-gray-400 text-white">Kundeninformationen</h2>
                     <label for="kunde" class="block mt-2 mb-2 text-sm font-medium text-gray-300">Kunde</label>
                     <?php
-
+                    $stmt = $conn->prepare("SELECT * FROM kunde");
+                    $stmt->execute();
+                    $kunde_tb = $stmt->fetchAll();
+                    $kunde = $stmt->fetch();
 
                     if ($kunde_tb == true) {
                         echo "<select required name='kunde' id='kunde' class='border-gray-200 bg-white text-sm placeholder-gray-500 shadow-sm border-gray-700 bg-gray-900 text-white outline-none appearance-none border border-transparent rounded w-full p-2  text-white leading-normal appearance-none focus:outline-none focus:bg-white focus:bg-gray-800 focus:border-gray-300 focus:border-gray-500 focus:text-white placeholder-white'>";
@@ -198,10 +194,13 @@ if(isset($_GET['a_nr']) && !empty($_GET['a_nr'])) {
                         <?php
                         if ($stmt->rowCount() > 0) {
                             if(!isset($_GET["k_id"]) && empty($_GET["k_id"])) {
-                                echo "<p>" . $row['anrede'] . "</p>";
-                                echo "<p>" . $row['name'] . "</p>";
-                                echo "<p>" . $row['adresse'] . "</p>";
-                                echo "<p>" . $row['plz'] . ", " . $row['ort'] . "</p>";
+                                $stmt = $conn->prepare("SELECT * FROM kunde");
+                                $stmt->execute();
+                                $kunde = $stmt->fetch();
+                                echo "<p>" . $kunde['anrede'] . "</p>";
+                                echo "<p>" . $kunde['name'] . "</p>";
+                                echo "<p>" . $kunde['adresse'] . "</p>";
+                                echo "<p>" . $kunde['plz'] . ", " . $row['ort'] . "</p>";
                             } else {
                                 $stmt = $conn->prepare("SELECT * FROM kunde WHERE k_id = :k_id");
                                 $stmt->execute([
@@ -211,7 +210,7 @@ if(isset($_GET['a_nr']) && !empty($_GET['a_nr'])) {
                                 echo "<p>" . $kunde['anrede'] . "</p>";
                                 echo "<p>" . $kunde['name'] . "</p>";
                                 echo "<p>" . $kunde['adresse'] . "</p>";
-                                echo "<p>" . $kunde['plz'] . ", " . $row['ort'] . "</p>";
+                                echo "<p>" . $kunde['plz'] . ", " . $kunde['ort'] . "</p>";
                             }
                         } else {
                             echo "<p>Keine Kundeninformationen vorhanden</p>";
@@ -223,6 +222,10 @@ if(isset($_GET['a_nr']) && !empty($_GET['a_nr'])) {
                     <h2 class="py-5 text-lg font-medium italic text-gray-400 text-white">Mitarbeiter</h2>
                     <label for="kunde" class="block mt-2 mb-2 text-sm font-medium text-gray-300">Zu Mitarbeiter zuweisen</label>
                     <?php
+                    $stmt = $conn->prepare("SELECT * FROM users");
+                    $stmt->execute();
+                    $mitarbeiter_tb = $stmt->fetchAll();
+
                     if ($mitarbeiter_tb == true) {
                         echo "<select required name='user' id='user' class='border-gray-200 bg-white text-sm placeholder-gray-500 shadow-sm border-gray-700 bg-gray-900 text-white outline-none appearance-none border border-transparent rounded w-full p-2  text-white leading-normal appearance-none focus:outline-none focus:bg-white focus:bg-gray-800 focus:border-gray-300 focus:border-gray-500 focus:text-white placeholder-white'>";
                         foreach ($mitarbeiter_tb as $row) {

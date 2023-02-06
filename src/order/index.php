@@ -23,12 +23,13 @@ session_start();
             <thead class="text-xs dark:text-gray-700 uppercase dark:bg-gray-50 bg-gray-700 text-gray-400">
                 <tr>
                     <th scope="col" class="px-6 py-3">ID</th>
-                    <th scope="col" class="px-6 py-3">Name</th>
+                    <th scope="col" class="px-6 py-3">Auftrag Name</th>
                     <th scope="col" class="px-6 py-3">Tags</th>
                     <th scope="col" class="px-6 py-3">Status</th>
                     <th scope="col" class="px-6 py-3">Hinzugefügt am</th>
                     <th scope="col" class="px-6 py-3">Wunschtermin</th>
-                    <th scope="col" class="px-6 py-3">Aufgabe zugewiesen</th>
+                    <th scope="col" class="px-6 py-3">Mitarbeiter zugewiesen</th>
+                    <th scope="col" class="px-6 py-3">Kunde zugewiesen</th>
                     <th scope="col" class="px-6 py-3">Details</th>
                     <th scope="col" class="px-6 py-3">Delete</th>
                 </tr>
@@ -43,13 +44,14 @@ session_start();
                         die;
                     }
 
-                    $stmt = $conn->prepare("SELECT * FROM auftrag JOIN users ON auftrag.u_id = users.u_id WHERE berechtigungen = :berechtigungen");
+                    $stmt = $conn->prepare("SELECT auftrag.*, users.name as user_name, kunde.name as customer_name FROM auftrag JOIN users ON auftrag.u_id = users.u_id JOIN kunde ON auftrag.k_id = kunde.k_id WHERE (berechtigungen = :berechtigungen OR berechtigungen = 'Bereichsleiter' OR berechtigungen = 'Administator')  AND (berechtigungen = 'Administator' OR berechtigungen = 'Bereichsleiter' OR :berechtigungen = 'Mitarbeiter')");
                     $stmt->execute([
                         ':berechtigungen' => $_SESSION['login_b']
                     ]);
+                    $all = $stmt->fetchAll();
 
                     if ($stmt->rowCount() > 0) {
-                        foreach ($stmt as $row) {
+                        foreach ($all as $row) {
                             echo "<tr class='bg-white border-b bg-gray-800 border-gray-700 text-center'>";
                             echo "<th scope='row' class='tx-6 py-4 font-medium dark:text-gray-900 whitespace-nowrap text-white'>" . $row['auftr_nr'] . "</th>";
                             echo "<td class='px-6 py-4'>" . $row['name'] . "</td>";
@@ -80,7 +82,8 @@ session_start();
                             }
                             echo "<td class='px-6 py-4'>" . $row['date'] . "</td>";
                             echo "<td class='px-6 py-4'>" . $row['desired_date'] . "</td>";
-                            echo "<td class='px-6 py-4'>" . $row['u_id'] . "</td>";
+                            echo "<td class='px-6 py-4'>" . $row['user_name'] . "</td>";
+                            echo "<td class='px-6 py-4'>" . $row['customer_name'] . "</td>";
                             echo "<td class='px-6 py-4'>" . "<a href='details/?a_nr=" . $row['auftr_nr'] . "' class='font-medium text-blue-600 dark:text-blue-400 hover:underline'>Details</a>" . "</td>";
                             echo "<td class='px-6 py-4'>" . "<a href='?del_nr=" . $row['auftr_nr'] . "' class='font-medium text-red-600 dark:text-blue-400 hover:underline'>Delete</a>" . "</td>";
                             echo "</tr>";

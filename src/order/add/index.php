@@ -41,10 +41,10 @@ if (isset($_POST["create_order"])) {
             case "addTask":
                 echo "<script>alert('Auftrag wurde erstellt');window.location.replace('../');</script>";
                 break;
-                
+
             case "duplicateTask":
                 echo "<script>alert('Auftrag existiert bereits')</script>";
-                break;    
+                break;
         }
     }
 
@@ -172,7 +172,6 @@ if (isset($_POST["create_order"])) {
                     $stmt = $conn->prepare("SELECT * FROM kunde");
                     $stmt->execute();
                     $kunde_tb = $stmt->fetchAll();
-                    $kunde = $stmt->fetch();
 
                     if ($kunde_tb == true) {
                         echo "<select required name='kunde' id='kunde' class='border-gray-200 bg-white text-sm placeholder-gray-500 shadow-sm border-gray-700 bg-gray-900 text-white border border-transparent rounded w-full p-2  text-white focus:outline-none focus:bg-white focus:bg-gray-800 focus:border-gray-300 focus:border-gray-500 focus:text-white placeholder-white'>";
@@ -193,7 +192,7 @@ if (isset($_POST["create_order"])) {
                         <?php
                         if ($stmt->rowCount() > 0) {
                             if(!isset($_GET["k_id"])) {
-                                $stmt = $conn->prepare("SELECT * FROM kunde WHERE k_id = :k_id");
+                                $stmt = $conn->prepare("SELECT * FROM kunde");
                                 $stmt->execute();
                                 $kunde = $stmt->fetch();
                                 echo "<p>" . $kunde['anrede'] . "</p>";

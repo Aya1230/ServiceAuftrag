@@ -48,8 +48,6 @@ if (isset($_POST["create_order"])) {
         }
     }
 
-
-
     $stmt = $conn->prepare("SELECT * FROM auftrag WHERE auftr_nr = :name");
     $stmt->execute([
         ':name' => strip_tags(htmlspecialchars($_POST['auftragsname']))
@@ -59,7 +57,7 @@ if (isset($_POST["create_order"])) {
     if ($result) {
         error("duplicateTask");
     } else {
-        $stmt = $conn->prepare("INSERT INTO auftrag (auftr_name, details, tag_nr, s_nr, desired_date, anrede, name,adresse, plz, ort, u_id, k_id) VALUES (:auftr_name, :details, :tag_nr, :s_nr, :desired_date, :anrede, :name, :adresse, :plz, :ort,  :u_id, :K_id)");
+        $stmt = $conn->prepare("INSERT INTO auftrag (auftr_name, details, tag_nr, s_nr, desired_date, anrede, name, adresse, plz, ort, u_id, k_id) VALUES (:auftr_name, :details, :tag_nr, :s_nr, :desired_date, :anrede, :name, :adresse, :plz, :ort,  :u_id, :k_id)");
         $stmt->execute([
             ':auftr_name' => strip_tags(htmlspecialchars($_POST['auftragsname'])),
             ':details' => strip_tags(htmlspecialchars($_POST['details'])),

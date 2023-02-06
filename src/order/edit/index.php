@@ -241,7 +241,7 @@ if(isset($_GET['a_nr']) && !empty($_GET['a_nr'])) {
     </div>
     <div class="flex-auto w-2/3 items-center">
         <button onclick="location.href='../'" type="button" class="w-32 mt-5 text-white text-center bg-red-700 hover:bg-red-800 font-medium rounded-lg text-sm px-5 py-3 mr-2 mb-2">Abbrechen</button>
-        <input type="submit" <?php if (!($stmt->rowCount() > 0)) echo "disabled"?> name="create_order" value="Hinzufügen" class="w-80 text-white text-center bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm mt-5 px-5 py-3 mb-2"></input>
+        <button onclick="validateForm()" <?php if (!($stmt->rowCount() > 0)) echo "disabled"?>  name="create_order" class="w-80 text-white text-center bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm mt-5 px-5 py-3 mb-2">Updaten</button>
     </div>
 </form>
 </body>
